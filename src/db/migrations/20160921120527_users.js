@@ -6,7 +6,7 @@ exports.up = async knex => {
     table.string('password').notNullable();
     table.boolean('admin').notNullable().defaultTo(false);
     table.timestamp('createdAt').notNullable().defaultTo(knex.raw('now()'));
-    table.timestamp('lastSeenAt').notNullable().defaultTo(knex.raw('now()'));
+    table.timestamp('lastOnlineAt').notNullable().defaultTo(knex.raw('now()'));
     table.timestamp('updatedAt').notNullable().defaultTo(knex.raw('now()'));
   });
   await knex.schema.createTable('sessions', table => {

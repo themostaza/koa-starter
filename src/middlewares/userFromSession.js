@@ -10,9 +10,27 @@ const userFromSession = async (ctx, next) => {
   if (!cryptoUtils.isValidUUID(sessionId)) {
     ctx.throw(400, 'Invalid session token');
   }
-  const session = await knex('sessions').where({ id: sessionId }).first();
-  if (session) {
-    ctx.state.currentUserId = session.userId;
+  // TODO: Translate to knex query languague
+  // TODO: Is updating "lastOnlineAt" needed at all?
+  const updateResult = await knex.raw(
+    `
+    UPDATE users
+    SET "lastOnlineAt" = NOW()
+    WHERE id = (
+      SELECT u.id
+      FROM users u
+      WHERE u.id = (
+        SELECT s."userId"
+        FROM "activeSessions" s
+        WHERE s.id = '${sessionId}'
+      )
+    )
+    RETURNING *
+  `
+  );
+  const updatedUser = updateResult.rows[0];
+  if (updatedUser && updatedUser.id) {
+    ctx.state.currentUserId = updatedUser.id;
     ctx.state.currentSessionId = sessionId;
   }
   await next();

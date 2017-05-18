@@ -7,7 +7,7 @@ const assertAuthenticatedMiddlware = require('../middlewares/assertAuthenticated
 const knex = require('../db/connection');
 
 router.get('/', async ctx => {
-  ctx.body = { ciao: true };
+  ctx.body = { hello: true };
   return ctx;
 });
 
