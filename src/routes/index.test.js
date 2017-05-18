@@ -1,9 +1,9 @@
 /* @flow */
 require('dotenv').config();
 
-const app = require('./app');
+const app = require('../app');
 const request = require('supertest');
-const knex = require('./db/connection');
+const knex = require('../db/connection');
 
 beforeEach(async () => {
   await knex.migrate.rollback();
