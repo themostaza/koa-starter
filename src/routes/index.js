@@ -1,7 +1,9 @@
 /* @flow */
 const router = require('koa-router')();
 const bcrypt = require('bcrypt');
-const passport = require('../passport');
+const uuid = require('uuid');
+
+// const passport = require('../passport');
 const knex = require('../db/connection');
 
 router.get('/', async ctx => {
@@ -9,18 +11,35 @@ router.get('/', async ctx => {
   return ctx;
 });
 
+const comparePass = (userPassword, databasePassword) => {
+  return bcrypt.compareSync(userPassword, databasePassword);
+};
+
 router.post('/auth/login', async ctx => {
+  const { email, password } = ctx.request.body;
   try {
-    await passport.authenticate('local', async (err, user, info) => {
-      if (err) throw err;
-      if (!user) throw new Error('User not found');
-      if (user) {
-        await ctx.login(user);
-      }
-      ctx.body = { user: user };
-    })(ctx);
+    const user = await knex('users').where({ email }).first().returning('*');
+    if (!user || !comparePass(password, user.password)) {
+      throw new Error('Invalid credentials');
+    }
+    const [session] = await knex('sessions')
+      .insert({
+        id: uuid.v4(),
+        userId: user.id,
+        ipAddress: ctx.ip,
+        userAgent: ctx.headers['user-agent'],
+      })
+      .returning('*');
+    ctx.body = {
+      id: user.id,
+      email: email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      sessionToken: session.id,
+    };
   } catch (err) {
-    ctx.body = { success: false };
+    console.log(err);
+    ctx.body = { error: err };
     ctx.throw(401);
   }
 });
@@ -30,14 +49,38 @@ router.post('/auth/signup', async ctx => {
   const salt = bcrypt.genSaltSync();
   const hash = bcrypt.hashSync(password, salt);
   try {
-    await knex('users').insert({ email: email, password: hash }).returning('*');
-    await passport.authenticate('local', async (err, user, info) => {
-      if (!user) throw new Error('Invalid authentication');
-      await ctx.login(user);
-      ctx.body = { user: user };
-    })(ctx);
+    const [user] = await knex('users').insert({ email: email, password: hash }).returning('*');
+    const [session] = await knex('sessions')
+      .insert({
+        id: uuid.v4(),
+        userId: user.id,
+        ipAddress: ctx.ip,
+        userAgent: ctx.headers['user-agent'],
+      })
+      .returning('*');
+    ctx.body = {
+      id: user.id,
+      email: email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      sessionToken: session.id,
+    };
   } catch (err) {
-    ctx.body = { success: false };
+    console.log(err);
+    ctx.body = { error: err };
+    ctx.throw(401);
+  }
+});
+
+router.post('/auth/logout', async ctx => {
+  const { currentSessionId, currentUserId } = ctx;
+  try {
+    await knex('sessions')
+      .where({ id: currentSessionId, userId: currentUserId })
+      .update({ loggedOutAt: knex.raw(`now()`) });
+    ctx.body = { success: true };
+  } catch (err) {
+    ctx.body = { error: err };
     ctx.throw(401);
   }
 });

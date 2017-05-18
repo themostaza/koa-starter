@@ -11,12 +11,16 @@ beforeEach(async () => {
   await knex.seed.run();
 });
 
-afterEach(() => {
-  return knex.migrate.rollback();
+afterEach(async () => {
+  await knex.migrate.rollback();
+});
+
+afterAll(async () => {
+  await knex.destroy();
 });
 
 test('GET /, should be reachable', async () => {
-  await request(app.listen()).get('/').expect(200);
+  await request(app.listen()).get('/').expect(200).expect('Content-Type', /json/);
 });
 
 test('POST /auth/signup, should register a new user', async () => {
@@ -26,10 +30,11 @@ test('POST /auth/signup, should register a new user', async () => {
       email: 'michael@test.com',
       password: 'herman',
     })
-    .expect(200)
-    .expect('Content-Type', /json/);
-  expect(res.body.user.email).toBe('michael@test.com');
-  expect(res.body.user.admin).toBe(false);
+    .expect(200);
+  expect(res.body.id).toBeTruthy();
+  expect(res.body.email).toBe('michael@test.com');
+  expect(res.body.createdAt).toBeTruthy();
+  expect(res.body.sessionToken).toBeTruthy();
 });
 
 test('POST /auth/login, should login an existing user', async () => {
@@ -39,8 +44,17 @@ test('POST /auth/login, should login an existing user', async () => {
       email: 'jeremy@test.com',
       password: 'johnson123',
     })
-    .expect(200)
-    .expect('Content-Type', /json/);
-  expect(res.body.user.email).toBe('jeremy@test.com');
-  expect(res.body.user.admin).toBe(false);
+    .expect(200);
+  expect(res.body.id).toBeTruthy();
+  expect(res.body.email).toBe('jeremy@test.com');
+  expect(res.body.createdAt).toBeTruthy();
+  expect(res.body.sessionToken).toBeTruthy();
+});
+
+test('POST /auth/logout, should logout a logged in user', async () => {
+  const res = await request(app.listen())
+    .post('/auth/logout')
+    .set({ 'X-APP-SESSION-TOKEN': '932fb35f-623d-44bd-b180-77a71eca5054' })
+    .expect(200);
+  expect(res.body.success).toBe(true);
 });

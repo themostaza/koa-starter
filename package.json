@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest src",
+    "test": "jest src --i",
     "test:watch": "npm run test -- --watch",
     "start-dev": "nodemon src/index.js",
     "reset-db": "node sql/reset_db"
@@ -18,12 +18,10 @@
     "koa": "2.2.0",
     "koa-body": "2.0.1",
     "koa-logger": "3.0.0",
-    "koa-passport": "3.0.0",
     "koa-router": "7.1.1",
     "koa-session": "5.0.0",
-    "passport-local": "1.0.0",
     "pg": "6.2.2",
-    "pg-extra": "0.0.13"
+    "uuid": "3.0.1"
   },
   "devDependencies": {
     "babel-jest": "20.0.1",
@@ -32,7 +30,6 @@
     "flow-bin": "0.46.0",
     "jest": "20.0.1",
     "nodemon": "1.11.0",
-    "supertest": "3.0.0",
-    "supertest-koa-agent": "0.3.0"
+    "supertest": "3.0.0"
   }
 }
