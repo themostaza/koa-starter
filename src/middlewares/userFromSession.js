@@ -9,6 +9,7 @@ const userFromSession = async (ctx, next) => {
   }
   if (!cryptoUtils.isValidUUID(sessionId)) {
     ctx.throw(400, 'Invalid session token');
+    return;
   }
   // TODO: Translate to knex query languague
   // TODO: Is updating "lastOnlineAt" needed at all?
@@ -29,6 +30,10 @@ const userFromSession = async (ctx, next) => {
   `
   );
   const updatedUser = updateResult.rows[0];
+  if (!updatedUser || !updatedUser.id) {
+    ctx.throw(401, 'Session expired, please log-in again');
+    return;
+  }
   if (updatedUser && updatedUser.id) {
     ctx.state.currentUserId = updatedUser.id;
     ctx.state.currentSessionId = sessionId;
