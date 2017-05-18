@@ -8,10 +8,6 @@ const DATABASE_URL =
 
 const COOKIE_KEY = process.env.COOKIE_KEY;
 
-if (IS_DEVELOPMENT) {
-  console.log(exports);
-}
-
 module.exports = {
   IS_DEVELOPMENT,
   IS_PRODUCTION,
