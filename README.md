@@ -19,9 +19,9 @@ yarn run start-dev
 > Server is listening on http://localhost:3000...
 ```
 
-Create a .env file in the root directory which will let you set environment variables. npm run start-dev will read from it.
+Create a `.env` file in the root directory which will let you set environment variables. `yarn run start-dev` will read from it.
 
-Example .env:
+Example `.env`:
 ```
 DATABASE_URL=postgres://username:password@localhost:5432/my-database
 COOKIE_KEY=123456789
