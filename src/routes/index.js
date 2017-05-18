@@ -1,9 +1,9 @@
 /* @flow */
 const router = require('koa-router')();
-const bcrypt = require('bcrypt');
 const uuid = require('uuid');
+const cryptoUtils = require('../utils/crypto');
+const assertAuthenticatedMiddlware = require('../middlewares/assertAuthenticated');
 
-// const passport = require('../passport');
 const knex = require('../db/connection');
 
 router.get('/', async ctx => {
@@ -11,15 +11,11 @@ router.get('/', async ctx => {
   return ctx;
 });
 
-const comparePass = (userPassword, databasePassword) => {
-  return bcrypt.compareSync(userPassword, databasePassword);
-};
-
 router.post('/auth/login', async ctx => {
   const { email, password } = ctx.request.body;
   try {
     const user = await knex('users').where({ email }).first().returning('*');
-    if (!user || !comparePass(password, user.password)) {
+    if (!user || !cryptoUtils.checkPassword(password, user.password)) {
       throw new Error('Invalid credentials');
     }
     const [session] = await knex('sessions')
@@ -46,8 +42,7 @@ router.post('/auth/login', async ctx => {
 
 router.post('/auth/signup', async ctx => {
   const { email, password } = ctx.request.body;
-  const salt = bcrypt.genSaltSync();
-  const hash = bcrypt.hashSync(password, salt);
+  const hash = cryptoUtils.hashPassword(password);
   try {
     const [user] = await knex('users').insert({ email: email, password: hash }).returning('*');
     const [session] = await knex('sessions')
@@ -72,14 +67,15 @@ router.post('/auth/signup', async ctx => {
   }
 });
 
-router.post('/auth/logout', async ctx => {
-  const { currentSessionId, currentUserId } = ctx;
+router.post('/auth/logout', assertAuthenticatedMiddlware, async ctx => {
+  const { currentSessionId, currentUserId } = ctx.state;
   try {
     await knex('sessions')
       .where({ id: currentSessionId, userId: currentUserId })
       .update({ loggedOutAt: knex.raw(`now()`) });
     ctx.body = { success: true };
   } catch (err) {
+    console.log(err);
     ctx.body = { error: err };
     ctx.throw(401);
   }

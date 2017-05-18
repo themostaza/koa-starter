@@ -23,6 +23,10 @@ test('GET /, should be reachable', async () => {
   await request(app.listen()).get('/').expect(200).expect('Content-Type', /json/);
 });
 
+test('GET /, should return 400 on invalid sessionToken', async () => {
+  await request(app.listen()).get('/').set({ 'X-APP-SESSION-TOKEN': 'invalid' }).expect(400);
+});
+
 test('POST /auth/signup, should register a new user', async () => {
   const res = await request(app.listen())
     .post('/auth/signup')
@@ -57,4 +61,11 @@ test('POST /auth/logout, should logout a logged in user', async () => {
     .set({ 'X-APP-SESSION-TOKEN': '932fb35f-623d-44bd-b180-77a71eca5054' })
     .expect(200);
   expect(res.body.success).toBe(true);
+});
+
+test('POST /auth/logout, should not logout an unauthenticated user', async () => {
+  const res = await request(app.listen())
+    .post('/auth/logout')
+    .set({ 'X-APP-SESSION-TOKEN': '123e4567-e89b-12d3-a456-426655440000' })
+    .expect(401);
 });

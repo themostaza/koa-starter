@@ -1,11 +1,10 @@
 /* @flow */
-const bcrypt = require('bcrypt');
+const cryptoUtils = require('../../utils/crypto');
 
 exports.seed = async knex => {
   // User
   await knex('users').del();
-  const salt = bcrypt.genSaltSync();
-  const hash = bcrypt.hashSync('johnson123', salt);
+  const hash = cryptoUtils.hashPassword('johnson123');
   const [user] = await knex('users')
     .insert({
       email: 'jeremy@test.com',
