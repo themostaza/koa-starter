@@ -1,10 +1,7 @@
-<div align="center">
-  <img src="https://s-media-cache-ak0.pinimg.com/originals/8e/00/2f/8e002f2f46190b78f2dbc7683b225759.gif" alt="koa-starter" width=90>
-</div>
-
-# koa-starter
+# koa-starter  <img src="https://s-media-cache-ak0.pinimg.com/originals/8e/00/2f/8e002f2f46190b78f2dbc7683b225759.gif" width="110" align="left">
 Our Koa starter kit
 
+&nbsp;
 
 ## Setup
 
@@ -24,7 +21,6 @@ Create a `.env` file in the root directory which will let you set environment va
 Example `.env`:
 ```
 DATABASE_URL=postgres://username:password@localhost:5432/my-database
-COOKIE_KEY=123456789
 ```
 
 ## Blabla
