@@ -2,7 +2,7 @@
 const router = require('koa-router')();
 const uuid = require('uuid');
 const cryptoUtils = require('../utils/crypto');
-const assertAuthenticatedMiddlware = require('../middlewares/assertAuthenticated');
+const assertAuthenticatedMiddleware = require('../middlewares/assertAuthenticated');
 
 const knex = require('../db/connection');
 
@@ -21,6 +21,7 @@ router.post('/auth/login', async ctx => {
     const [session] = await knex('sessions')
       .insert({
         id: uuid.v4(),
+        token: cryptoUtils.createSessionToken(),
         userId: user.id,
         ipAddress: ctx.ip,
         userAgent: ctx.headers['user-agent'],
@@ -34,7 +35,7 @@ router.post('/auth/login', async ctx => {
       sessionToken: session.id,
     };
   } catch (err) {
-    console.log(err);
+    console.error(err.message);
     ctx.body = { error: err };
     ctx.throw(401);
   }
@@ -44,10 +45,13 @@ router.post('/auth/signup', async ctx => {
   const { email, password } = ctx.request.body;
   const hash = cryptoUtils.hashPassword(password);
   try {
-    const [user] = await knex('users').insert({ email: email, password: hash }).returning('*');
+    const [user] = await knex('users')
+      .insert({ id: uuid.v4(), email: email, password: hash })
+      .returning('*');
     const [session] = await knex('sessions')
       .insert({
         id: uuid.v4(),
+        token: cryptoUtils.createSessionToken(),
         userId: user.id,
         ipAddress: ctx.ip,
         userAgent: ctx.headers['user-agent'],
@@ -58,24 +62,24 @@ router.post('/auth/signup', async ctx => {
       email: email,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-      sessionToken: session.id,
+      sessionToken: session.token,
     };
   } catch (err) {
-    console.log(err);
+    console.error(err.message);
     ctx.body = { error: err };
     ctx.throw(401);
   }
 });
 
-router.post('/auth/logout', assertAuthenticatedMiddlware, async ctx => {
-  const { currentSessionId, currentUserId } = ctx.state;
+router.post('/auth/logout', assertAuthenticatedMiddleware, async ctx => {
+  const { currentSessionToken, currentUser } = ctx.state;
   try {
     await knex('sessions')
-      .where({ id: currentSessionId, userId: currentUserId })
+      .where({ id: currentSessionToken, userId: currentUser.id })
       .update({ loggedOutAt: knex.raw(`now()`) });
     ctx.body = { success: true };
   } catch (err) {
-    console.log(err);
+    console.error(err.message);
     ctx.body = { error: err };
     ctx.throw(401);
   }

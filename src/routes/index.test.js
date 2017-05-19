@@ -2,6 +2,7 @@
 require('dotenv').config();
 
 const app = require('../app');
+const mocks = require('../mocks');
 const request = require('supertest');
 const knex = require('../db/connection');
 
@@ -23,8 +24,8 @@ test('GET /, should be reachable', async () => {
   await request(app.listen()).get('/').expect(200).expect('Content-Type', /json/);
 });
 
-test('GET /, should return 400 on invalid sessionToken', async () => {
-  await request(app.listen()).get('/').set({ 'X-APP-SESSION-TOKEN': 'invalid' }).expect(400);
+test('GET /, should return 401 on invalid sessionToken', async () => {
+  await request(app.listen()).get('/').set({ 'X-APP-SESSION-TOKEN': 'invalid' }).expect(401);
 });
 
 test('POST /auth/signup, should register a new user', async () => {
@@ -45,12 +46,12 @@ test('POST /auth/login, should login an existing user', async () => {
   const res = await request(app.listen())
     .post('/auth/login')
     .send({
-      email: 'jeremy@test.com',
-      password: 'johnson123',
+      email: mocks.user.email,
+      password: mocks.userPlainTextPassword,
     })
     .expect(200);
   expect(res.body.id).toBeTruthy();
-  expect(res.body.email).toBe('jeremy@test.com');
+  expect(res.body.email).toBe(mocks.user.email);
   expect(res.body.createdAt).toBeTruthy();
   expect(res.body.sessionToken).toBeTruthy();
 });
@@ -58,7 +59,7 @@ test('POST /auth/login, should login an existing user', async () => {
 test('POST /auth/logout, should logout a logged in user', async () => {
   const res = await request(app.listen())
     .post('/auth/logout')
-    .set({ 'X-APP-SESSION-TOKEN': '932fb35f-623d-44bd-b180-77a71eca5054' })
+    .set({ 'X-APP-SESSION-TOKEN': mocks.session.token })
     .expect(200);
   expect(res.body.success).toBe(true);
 });

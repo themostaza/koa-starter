@@ -6,8 +6,7 @@
   "scripts": {
     "test": "jest src --i",
     "test:watch": "npm run test -- --watch",
-    "start-dev": "nodemon src/index.js",
-    "reset-db": "node sql/reset_db"
+    "start-dev": "nodemon src/index.js"
   },
   "author": "",
   "license": "ISC",

@@ -1,6 +1,7 @@
 /* @flow */
 require('dotenv').config();
 
+const mocks = require('../mocks');
 const knex = require('../db/connection');
 const assertAuthenticated = require('./assertAuthenticated');
 
@@ -34,8 +35,8 @@ test('calls next() when authenticated', async () => {
   const ctx = {
     headers: {},
     state: {
-      currentUserId: 1,
-      currentSessionId: '932fb35f-623d-44bd-b180-77a71eca5054',
+      currentUser: { id: mocks.user.id },
+      currentSessionToken: mocks.session.token,
     },
     throw: jest.fn(),
   };

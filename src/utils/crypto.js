@@ -1,5 +1,6 @@
 /* @flow */
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 const hashPassword = password => {
   const salt = bcrypt.genSaltSync();
@@ -16,8 +17,14 @@ const isValidUUID = uuid => {
   return re.test(uuid);
 };
 
+// https://github.com/parse-community/parse-server/blob/master/src/cryptoUtils.js
+const createSessionToken = () => {
+  return crypto.randomBytes(32 / 2).toString('hex');
+};
+
 module.exports = {
   hashPassword,
   checkPassword,
   isValidUUID,
+  createSessionToken,
 };

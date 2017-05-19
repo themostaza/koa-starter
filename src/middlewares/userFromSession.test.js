@@ -2,6 +2,7 @@
 require('dotenv').config();
 
 const knex = require('../db/connection');
+const mocks = require('../mocks');
 const userFromSession = require('./userFromSession');
 
 beforeEach(async () => {
@@ -29,22 +30,9 @@ test("doesn't do anything if a session token is not provided", async () => {
   expect(ctx.state).toEqual({});
 });
 
-test('throws 400 if the session token is not a valid UUID', async () => {
-  const ctx = {
-    headers: { 'x-app-session-token': 'invalid' },
-    state: {},
-    throw: jest.fn(),
-  };
-  const next = jest.fn();
-  await userFromSession(ctx, next);
-  expect(next).toHaveBeenCalledTimes(0);
-  expect(ctx.throw).toHaveBeenCalledWith(400, 'Invalid session token');
-  expect(ctx.state).toEqual({});
-});
-
 test('throws 401 if the sessionToken is not found', async () => {
   const ctx = {
-    headers: { 'x-app-session-token': '123e4567-e89b-12d3-a456-426655440000' },
+    headers: { 'x-app-session-token': '123456789' },
     state: {},
     throw: jest.fn(),
   };
@@ -57,7 +45,7 @@ test('throws 401 if the sessionToken is not found', async () => {
 
 test("sets the user's info in state when authenticated", async () => {
   const ctx = {
-    headers: { 'x-app-session-token': '932fb35f-623d-44bd-b180-77a71eca5054' },
+    headers: { 'x-app-session-token': mocks.session.token },
     state: {},
     throw: jest.fn(),
   };
@@ -65,8 +53,7 @@ test("sets the user's info in state when authenticated", async () => {
   await userFromSession(ctx, next);
   expect(next).toHaveBeenCalledTimes(1);
   expect(ctx.throw).toHaveBeenCalledTimes(0);
-  expect(ctx.state).toEqual({
-    currentUserId: 1,
-    currentSessionId: '932fb35f-623d-44bd-b180-77a71eca5054',
-  });
+  expect(ctx.state.currentSessionToken).toBe(mocks.session.token);
+  expect(ctx.state.currentUser.id).toBe(mocks.user.id);
+  expect(ctx.state.currentUser.email).toBe(mocks.user.email);
 });
