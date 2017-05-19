@@ -23,13 +23,34 @@ afterAll(async () => {
 // ========================
 //   AUTH/SIGNUP
 // ========================
+test('POST /auth/signup, throws 400 when email is invalid', async () => {
+  const res = await request(app.listen())
+    .post('/auth/signup')
+    .send({ email: 'michaeltest.com', password: 'herman123' })
+    .expect(400);
+  expect(res.body).toEqual({});
+});
+
+test('POST /auth/signup, throws 400 when password is invalid', async () => {
+  const res = await request(app.listen())
+    .post('/auth/signup')
+    .send({ email: 'michael@test.com', password: 'herman' })
+    .expect(400);
+  expect(res.body).toEqual({});
+});
+
+test('POST /auth/signup, throws 409 when email is already in use', async () => {
+  const res = await request(app.listen())
+    .post('/auth/signup')
+    .send({ email: mocks.user.email, password: 'herman123' })
+    .expect(409);
+  expect(res.body).toEqual({});
+});
+
 test('POST /auth/signup, should register a new user', async () => {
   const res = await request(app.listen())
     .post('/auth/signup')
-    .send({
-      email: 'michael@test.com',
-      password: 'herman',
-    })
+    .send({ email: 'michael@test.com', password: 'herman123' })
     .expect(200);
   expect(res.body.id).toBeTruthy();
   expect(res.body.email).toBe('michael@test.com');
@@ -40,13 +61,35 @@ test('POST /auth/signup, should register a new user', async () => {
 // ========================
 //   AUTH/LOGIN
 // ========================
-test('POST /auth/login, should login an existing user', async () => {
+
+test('POST /auth/login, throws 400 when email is empty', async () => {
   const res = await request(app.listen())
     .post('/auth/login')
-    .send({
-      email: mocks.user.email,
-      password: mocks.userPlainTextPassword,
-    })
+    .send({ password: 'herman123' })
+    .expect(400);
+  expect(res.body).toEqual({});
+});
+
+test('POST /auth/login, throws 400 when password is empty', async () => {
+  const res = await request(app.listen())
+    .post('/auth/login')
+    .send({ email: mocks.user.email })
+    .expect(400);
+  expect(res.body).toEqual({});
+});
+
+test('POST /auth/login, throws 401 when credentials are invalid', async () => {
+  const res = await request(app.listen())
+    .post('/auth/login')
+    .send({ email: mocks.user.email, password: 'asdfasdf' })
+    .expect(401);
+  expect(res.body).toEqual({});
+});
+
+test('POST /auth/login, logins an existing user', async () => {
+  const res = await request(app.listen())
+    .post('/auth/login')
+    .send({ email: mocks.user.email, password: mocks.userPlainTextPassword })
     .expect(200);
   expect(res.body.id).toBeTruthy();
   expect(res.body.email).toBe(mocks.user.email);
@@ -57,7 +100,7 @@ test('POST /auth/login, should login an existing user', async () => {
 // ========================
 //   AUTH/LOGOUT
 // ========================
-test('POST /auth/logout, should logout a logged in user', async () => {
+test('POST /auth/logout, logout a logged in user', async () => {
   const res = await request(app.listen())
     .post('/auth/logout')
     .set({ 'X-APP-SESSION-TOKEN': mocks.session.token })
@@ -65,7 +108,7 @@ test('POST /auth/logout, should logout a logged in user', async () => {
   expect(res.body.success).toBe(true);
 });
 
-test('POST /auth/logout, should not logout an unauthenticated user', async () => {
+test("POST /auth/logout, doesn't logout an unauthenticated user", async () => {
   const res = await request(app.listen())
     .post('/auth/logout')
     .set({ 'X-APP-SESSION-TOKEN': '123e4567-e89b-12d3-a456-426655440000' })
