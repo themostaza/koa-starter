@@ -23,7 +23,7 @@ N.B.: A feature should be checked as done only when paired with failing and work
 - [x] Login - `auth/login` 
 - [x] Logout - `auth/logout`
 - [x] Email Verification - `auth/verify`
-- [ ] Password reset - `auth/verify`
+- [ ] Password reset - `auth/forgot` and `auth-reset`
 
 **Authorization: WIP**  
 
