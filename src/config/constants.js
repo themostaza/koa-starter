@@ -6,7 +6,6 @@ const PORT = Number.parseInt(process.env.PORT || '3000', 10) || 3000;
 const DATABASE_URL =
   process.env.DATABASE_URL || 'postgres://username:password@localhost:5432/my-database';
 
-const COOKIE_KEY = process.env.COOKIE_KEY;
 const MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS;
 const MANDRILL_API_KEY = process.env.MANDRILL_API_KEY;
 
@@ -15,7 +14,6 @@ module.exports = {
   IS_PRODUCTION,
   PORT,
   DATABASE_URL,
-  COOKIE_KEY,
   MAIL_FROM_ADDRESS,
   MANDRILL_API_KEY,
 };

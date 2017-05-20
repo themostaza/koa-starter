@@ -62,7 +62,6 @@ test('POST /auth/signup, should register a new user', async () => {
 // ========================
 //   AUTH/LOGIN
 // ========================
-
 test('POST /auth/login, throws 400 when email is empty', async () => {
   const res = await request(app.listen())
     .post('/auth/login')
