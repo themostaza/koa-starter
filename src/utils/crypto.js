@@ -22,9 +22,24 @@ const createSessionToken = () => {
   return crypto.randomBytes(32 / 2).toString('hex');
 };
 
+const createVerifyAccountToken = () => {
+  return crypto.randomBytes(32 / 2).toString('hex');
+};
+
+const createResetPasswordToken = () => {
+  return crypto.randomBytes(32 / 2).toString('hex');
+};
+
+const createTemporaryPassword = () => {
+  return crypto.randomBytes(32 / 2).toString('hex');
+};
+
 module.exports = {
   hashPassword,
   checkPassword,
   isValidUUID,
   createSessionToken,
+  createVerifyAccountToken,
+  createResetPasswordToken,
+  createTemporaryPassword,
 };

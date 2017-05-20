@@ -8,6 +8,7 @@ const user = {
   id: '932fb35f-623d-44bd-b180-77a71eca5054',
   email: 'jeremy@test.com',
   password: hash,
+  verifyEmailToken: 'n283r928j2029jjjflsakdfjasdf03',
 };
 
 const session = {

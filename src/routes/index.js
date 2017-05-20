@@ -11,5 +11,6 @@ router.get('/', async ctx => {
 router.post('/auth/login', authRoutes.login);
 router.post('/auth/signup', authRoutes.signup);
 router.post('/auth/logout', assertAuthenticatedMiddleware, authRoutes.logout);
+router.get('/auth/verify', authRoutes.verify);
 
 module.exports = router;

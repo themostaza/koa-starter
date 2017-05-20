@@ -5,11 +5,13 @@ const app = require('../../app');
 const mocks = require('../../mocks');
 const request = require('supertest');
 const knex = require('../../db/connection');
+jest.mock('../../services/mandrill.js');
 
 beforeEach(async () => {
   await knex.migrate.rollback();
   await knex.migrate.latest();
   await knex.seed.run();
+  jest.clearAllMocks();
 });
 
 afterEach(async () => {
@@ -48,14 +50,13 @@ test('POST /auth/signup, throws 409 when email is already in use', async () => {
 });
 
 test('POST /auth/signup, should register a new user', async () => {
+  const mandrillService = require('../../services/mandrill');
   const res = await request(app.listen())
     .post('/auth/signup')
     .send({ email: 'michael@test.com', password: 'herman123' })
     .expect(200);
-  expect(res.body.id).toBeTruthy();
-  expect(res.body.email).toBe('michael@test.com');
-  expect(res.body.createdAt).toBeTruthy();
-  expect(res.body.sessionToken).toBeTruthy();
+  expect(res.body.success).toBe(true);
+  expect(mandrillService.sendVerifyAccountEmail).toHaveBeenCalledTimes(1);
 });
 
 // ========================
@@ -113,4 +114,24 @@ test("POST /auth/logout, doesn't logout an unauthenticated user", async () => {
     .post('/auth/logout')
     .set({ 'X-APP-SESSION-TOKEN': '123e4567-e89b-12d3-a456-426655440000' })
     .expect(401);
+});
+
+// ========================
+//   AUTH/VERIFY
+// ========================
+test('GET /auth/verify, throws 400 when querystring is invalid', async () => {
+  const res = await request(app.listen()).get('/auth/verify?token=test').expect(400);
+});
+
+test('GET /auth/verify, throws 400 when the user is not found', async () => {
+  const res = await request(app.listen())
+    .get(`/auth/verify?token=${mocks.user.verifyEmailToken}&email=fake@fake.com`)
+    .expect(400);
+});
+
+test('GET /auth/verify, succeeds with calid input', async () => {
+  const res = await request(app.listen())
+    .get(`/auth/verify?token=${mocks.user.verifyEmailToken}&email=${mocks.user.email}`)
+    .expect(200);
+  expect(res.body.success).toBe(true);
 });
