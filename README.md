@@ -18,12 +18,16 @@ N.B.: A feature should be checked as done only when paired with failing and work
 - [x] Secure routes from unauthenticated access - `middlewares/assertAuthenticated`
 - [x] Enhance Koa context with current user - `middlewares/userFromSession`
 
+**Generic security:**  
+- [] Implement a public API key (like PARSE-APP-ID)
+
 **Authentication using session tokens (parse-server docet):**  
 - [x] Signup - `auth/signup` 
 - [x] Login - `auth/login` 
 - [x] Logout - `auth/logout`
 - [x] Email Verification - `auth/verify`
-- [ ] Password reset - `auth/forgot` and `auth-reset`
+- [x] Password reset request - `auth/forgot`
+- [x] Password reset page - `auth/reset`
 
 **Authorization: WIP**  
 
@@ -49,6 +53,9 @@ Example `.env`:
 DATABASE_URL=postgres://username:password@localhost:5432/my-database
 MAIL_FROM_ADDRESS=info@themostaza.com
 MANDRILL_API_KEY=secret-api-key
+HTML_VERIFY_EMAIL_SUCCESS_PATH=./public_html/verify_email_success.html
+HTML_PASSWORD_UPDATE_REQUEST_PATH=./public_html/password_update_request.html
+HTML_PASSWORD_UPDATE_SUCCESS_PATH=./public_html/password_update_success.html
 ```
 
 ## P.S.: 
