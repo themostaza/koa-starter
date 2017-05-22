@@ -19,7 +19,7 @@ N.B.: A feature should be checked as done only when paired with failing and work
 - [x] Enhance Koa context with current user - `middlewares/userFromSession`
 
 **Generic security:**  
-- [] Implement a public API key (like PARSE-APP-ID)
+- [ ] Implement a public API key (like PARSE-APP-ID)
 
 **Authentication using session tokens (parse-server docet):**  
 - [x] Signup - `auth/signup` 
