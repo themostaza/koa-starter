@@ -10,7 +10,6 @@ const userFromSessionMiddleware = require('./middlewares/userFromSession');
 const app = new Koa();
 app.poweredBy = false;
 
-// app.use(staticMiddleware(`../public_html`));
 app.use(bodyMiddleware);
 app.use(sessionMiddleware(app));
 app.use(userFromSessionMiddleware);

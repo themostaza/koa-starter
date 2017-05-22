@@ -1,7 +1,7 @@
 /* @flow */
 require('dotenv').config();
-
 const app = require('../../app');
+const constants = require('../../config/constants');
 const mocks = require('../../mocks');
 const request = require('supertest');
 const knex = require('../../db/connection');
@@ -28,6 +28,7 @@ afterAll(async () => {
 test('POST /auth/signup, throws 400 when email is invalid', async () => {
   const res = await request(app.listen())
     .post('/auth/signup')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ email: 'michaeltest.com', password: 'herman123' })
     .expect(400);
   expect(res.body).toEqual({});
@@ -36,6 +37,7 @@ test('POST /auth/signup, throws 400 when email is invalid', async () => {
 test('POST /auth/signup, throws 400 when password is invalid', async () => {
   const res = await request(app.listen())
     .post('/auth/signup')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ email: 'michael@test.com', password: 'herman' })
     .expect(400);
   expect(res.body).toEqual({});
@@ -44,6 +46,7 @@ test('POST /auth/signup, throws 400 when password is invalid', async () => {
 test('POST /auth/signup, throws 409 when email is already in use', async () => {
   const res = await request(app.listen())
     .post('/auth/signup')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ email: mocks.user.email, password: 'herman123' })
     .expect(409);
   expect(res.body).toEqual({});
@@ -53,6 +56,7 @@ test('POST /auth/signup, should register a new user', async () => {
   const mandrillService = require('../../services/mandrill');
   const res = await request(app.listen())
     .post('/auth/signup')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ email: 'michael@test.com', password: 'herman123' })
     .expect(200);
   expect(res.body.success).toBe(true);
@@ -65,6 +69,7 @@ test('POST /auth/signup, should register a new user', async () => {
 test('POST /auth/login, throws 400 when email is empty', async () => {
   const res = await request(app.listen())
     .post('/auth/login')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ password: 'herman123' })
     .expect(400);
   expect(res.body).toEqual({});
@@ -73,6 +78,7 @@ test('POST /auth/login, throws 400 when email is empty', async () => {
 test('POST /auth/login, throws 400 when password is empty', async () => {
   const res = await request(app.listen())
     .post('/auth/login')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ email: mocks.user.email })
     .expect(400);
   expect(res.body).toEqual({});
@@ -81,6 +87,7 @@ test('POST /auth/login, throws 400 when password is empty', async () => {
 test('POST /auth/login, throws 401 when credentials are invalid', async () => {
   const res = await request(app.listen())
     .post('/auth/login')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ email: mocks.user.email, password: 'asdfasdf' })
     .expect(401);
   expect(res.body).toEqual({});
@@ -89,6 +96,7 @@ test('POST /auth/login, throws 401 when credentials are invalid', async () => {
 test('POST /auth/login, logins an existing user', async () => {
   const res = await request(app.listen())
     .post('/auth/login')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ email: mocks.user.email, password: mocks.userPlainTextPassword })
     .expect(200);
   expect(res.body.id).toBeTruthy();
@@ -103,7 +111,10 @@ test('POST /auth/login, logins an existing user', async () => {
 test('POST /auth/logout, logout a logged in user', async () => {
   const res = await request(app.listen())
     .post('/auth/logout')
-    .set({ 'X-APP-SESSION-TOKEN': mocks.session.token })
+    .set({
+      'X-APP-SESSION-TOKEN': mocks.session.token,
+      'x-app-public-api-key': constants.PUBLIC_API_KEY,
+    })
     .expect(200);
   expect(res.body.success).toBe(true);
 });
@@ -111,7 +122,10 @@ test('POST /auth/logout, logout a logged in user', async () => {
 test("POST /auth/logout, doesn't logout an unauthenticated user", async () => {
   const res = await request(app.listen())
     .post('/auth/logout')
-    .set({ 'X-APP-SESSION-TOKEN': '123e4567-e89b-12d3-a456-426655440000' })
+    .set({
+      'X-APP-SESSION-TOKEN': '123e4567-e89b-12d3-a456-426655440000',
+      'x-app-public-api-key': constants.PUBLIC_API_KEY,
+    })
     .expect(401);
 });
 
@@ -119,18 +133,22 @@ test("POST /auth/logout, doesn't logout an unauthenticated user", async () => {
 //   AUTH/VERIFY
 // ========================
 test('GET /auth/verify, throws 400 when querystring is invalid', async () => {
-  const res = await request(app.listen()).get('/auth/verify?token=test').expect(400);
+  const res = await request(app.listen())
+    .get(`/auth/${constants.PUBLIC_API_KEY}/verify?token=test`)
+    .expect(400);
 });
 
 test('GET /auth/verify, throws 400 when the user is not found', async () => {
+  const { verifyEmailToken } = mocks.user;
   const res = await request(app.listen())
-    .get(`/auth/verify?token=${mocks.user.verifyEmailToken}&email=fake@fake.com`)
+    .get(`/auth/${constants.PUBLIC_API_KEY}/verify?token=${verifyEmailToken}&email=fake@fake.com`)
     .expect(400);
 });
 
 test('GET /auth/verify, succeeds with valid input', async () => {
+  const { verifyEmailToken, email } = mocks.user;
   const res = await request(app.listen())
-    .get(`/auth/verify?token=${mocks.user.verifyEmailToken}&email=${mocks.user.email}`)
+    .get(`/auth/${constants.PUBLIC_API_KEY}/verify?token=${verifyEmailToken}&email=${email}`)
     .expect('Content-Type', /html/)
     .expect(200);
 });
@@ -141,6 +159,7 @@ test('GET /auth/verify, succeeds with valid input', async () => {
 test('POST /auth/forgot, throws 400 when email is invalid', async () => {
   const res = await request(app.listen())
     .post('/auth/forgot')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ email: 'michaeltest.com' })
     .expect(400);
   expect(res.body).toEqual({});
@@ -149,6 +168,7 @@ test('POST /auth/forgot, throws 400 when email is invalid', async () => {
 test('POST /auth/forgot, throws 404 when user is not found', async () => {
   const res = await request(app.listen())
     .post('/auth/forgot')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ email: 'michael@test.com' })
     .expect(404);
   expect(res.body).toEqual({});
@@ -158,6 +178,7 @@ test('POST /auth/forgot, sends a mail when succeeds', async () => {
   const mandrillService = require('../../services/mandrill');
   const res = await request(app.listen())
     .post('/auth/forgot')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ email: mocks.user.email })
     .expect(200);
   expect(res.body.success).toBe(true);
@@ -168,23 +189,31 @@ test('POST /auth/forgot, sends a mail when succeeds', async () => {
 //   AUTH/RESET
 // ========================
 test('GET /auth/reset, throws 400 when querystring is invalid', async () => {
-  const res = await request(app.listen()).get('/auth/reset?token=test').expect(400);
+  const res = await request(app.listen())
+    .get(`/auth/${constants.PUBLIC_API_KEY}/reset?token=test`)
+    .expect(400);
 });
 
 test('GET /auth/reset, succeeds with valid input', async () => {
+  const { resetPasswordToken, email } = mocks.user;
   const res = await request(app.listen())
-    .get(`/auth/reset?token=${mocks.user.resetPasswordToken}&email=${mocks.user.email}`)
+    .get(`/auth/${constants.PUBLIC_API_KEY}/reset?token=${resetPasswordToken}&email=${email}`)
     .expect('Content-Type', /html/)
     .expect(200);
 });
 
 test('POST /auth/reset, throws 400 when input is invalid', async () => {
-  const res = await request(app.listen()).post('/auth/reset').send({ token: 'a' }).expect(400);
+  const res = await request(app.listen())
+    .post('/auth/reset')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
+    .send({ token: 'a' })
+    .expect(400);
 });
 
 test('POST /auth/reset, redirects to 302 when password is not provided', async () => {
   const res = await request(app.listen())
     .post('/auth/reset')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ token: 'test', email: 'michael@test.com' })
     .expect('location', /error=Required field: password/)
     .expect(302);
@@ -193,6 +222,7 @@ test('POST /auth/reset, redirects to 302 when password is not provided', async (
 test('POST /auth/reset, redirects to 302 when user is not found', async () => {
   const res = await request(app.listen())
     .post('/auth/reset')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ token: 'test', email: 'michael@test.com', password: '123456789' })
     .expect('location', /error=Password reset token is invalid or has expired/)
     .expect(302);
@@ -201,6 +231,7 @@ test('POST /auth/reset, redirects to 302 when user is not found', async () => {
 test('POST /auth/reset, succeeds with valid input', async () => {
   const res = await request(app.listen())
     .post('/auth/reset')
+    .set({ 'x-app-public-api-key': constants.PUBLIC_API_KEY })
     .send({ token: mocks.user.resetPasswordToken, email: mocks.user.email, password: '123456789' })
     .expect('Content-Type', /html/)
     .expect(200);
