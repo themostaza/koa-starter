@@ -52,4 +52,5 @@ const sendPasswordResetEmail = async (to, url) => {
 
 module.exports = {
   sendVerifyAccountEmail,
+  sendPasswordResetEmail,
 };

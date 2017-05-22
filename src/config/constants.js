@@ -11,6 +11,10 @@ const MANDRILL_API_KEY = process.env.MANDRILL_API_KEY;
 
 const HTML_VERIFY_EMAIL_SUCCESS_PATH =
   process.env.HTML_VERIFY_EMAIL_SUCCESS_PATH || './public_html/verify_email_success.html';
+const HTML_PASSWORD_UPDATE_REQUEST_PATH =
+  process.env.HTML_PASSWORD_UPDATE_REQUEST_PATH || './public_html/password_update_request.html';
+const HTML_PASSWORD_UPDATE_SUCCESS_PATH =
+  process.env.HTML_PASSWORD_UPDATE_SUCCESS_PATH || './public_html/password_update_success.html';
 
 module.exports = {
   IS_DEVELOPMENT,
@@ -20,4 +24,6 @@ module.exports = {
   MAIL_FROM_ADDRESS,
   MANDRILL_API_KEY,
   HTML_VERIFY_EMAIL_SUCCESS_PATH,
+  HTML_PASSWORD_UPDATE_REQUEST_PATH,
+  HTML_PASSWORD_UPDATE_SUCCESS_PATH,
 };

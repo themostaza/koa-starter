@@ -117,68 +117,84 @@ const verify = async ctx => {
 // ========================
 //   AUTH/FORGOT
 // ========================
-// const forgot = async ctx => {
-//   if (!ctx.request.body) {
-//     ctx.throw(400, 'Invalid request body');
-//   }
-//   if (!ctx.request.body.email) {
-//     ctx.throw(400, 'Required field: email');
-//   }
-//   if (!validator.isEmail(ctx.request.body.email)) {
-//     ctx.throw(400, 'Invalid email');
-//   }
-//   const email = ctx.request.body.email.trim().toLowerCase();
-//   const user = await knex('users').where({ email }).first();
-//   if (!user) {
-//     ctx.throw(404, 'User not found.');
-//   }
-//   const token = cryptoUtils.createResetPasswordToken();
-//   await knex('users').where({ id: user.id }).update({
-//     resetPasswordToken: token,
-//     resetPasswordTokenExpiresAt: knex.raw(`NOW() + INTERVAL '1 hour'`),
-//   });
-//   // TODO: Update this string with a BASE_URL maybe?
-//   const url = `http://${ctx.headers.host}/auth/reset?token=${token}&email=${email}`;
-//   await mandrillService.sendPasswordResetEmail(email, url);
-//   ctx.body = {
-//     success: true,
-//   };
-// };
+const forgot = async ctx => {
+  if (!ctx.request.body) {
+    ctx.throw(400, 'Invalid request body');
+  }
+  if (!ctx.request.body.email) {
+    ctx.throw(400, 'Required field: email');
+  }
+  if (!validator.isEmail(ctx.request.body.email)) {
+    ctx.throw(400, 'Invalid email');
+  }
+  const email = ctx.request.body.email.trim().toLowerCase();
+  const token = cryptoUtils.createResetPasswordToken();
+  const updatedUser = await knex('users').where({ email }).update({
+    resetPasswordToken: token,
+    resetPasswordTokenExpiresAt: knex.raw(`NOW() + INTERVAL '1 hour'`),
+  });
+  if (!updatedUser) {
+    ctx.throw(404, 'User not found.');
+  }
+  // TODO: Update this string with a BASE_URL maybe?
+  const url = `http://${ctx.headers.host}/auth/reset?token=${token}&email=${email}`;
+  await mandrillService.sendPasswordResetEmail(email, url);
+  ctx.body = {
+    success: true,
+  };
+};
 
 // ========================
 //   AUTH/RESET
 // ========================
-// const reset = async ctx => {
-//   if (!ctx.request.query || !ctx.request.query.token || !ctx.query.request.email) {
-//     ctx.throw(400, 'Invalid request query');
-//   }
-//   const email = ctx.request.query.email.trim().toLowerCase();
-//   const token = ctx.request.query.token;
-//   const user = await knex('users')
-//     .where({ email, resetPasswordToken: token })
-//     .andWhere('resetPasswordTokenExpiresAt', '<', knex.raw(`now()`))
-//     .first();
-//   if (!user) {
-//     ctx.throw(400, 'Password reset token is invalid or has expired.');
-//   }
-//   const password = cryptoUtils.createTemporaryPassword();
-//   const hash = cryptoUtils.hashPassword(password);
-//   await knex('users').where({ id: user.id }).update({
-//     password: hash,
-//     resetPasswordToken: null,
-//     resetPasswordTokenExpiresAt: null,
-//   });
-//   // TODO: What are we gonna do?
-//   ctx.body = {
-//     success: true,
-//   };
-// };
+const showResetPage = async ctx => {
+  if (!ctx.request.query || !ctx.request.query.token || !ctx.request.query.email) {
+    ctx.throw(400, 'Invalid request query');
+  }
+  return await send(ctx, `${constants.HTML_PASSWORD_UPDATE_REQUEST_PATH}`);
+};
+
+const reset = async ctx => {
+  if (!ctx.request.body || !ctx.request.body.token || !ctx.request.body.email) {
+    ctx.throw(400, 'Password reset token is invalid or has expired.');
+  }
+  const token = ctx.request.body.token;
+  const email = ctx.request.body.email.trim().toLowerCase();
+  const redirectBaseUrl = `http://${ctx.headers.host}/auth/reset?token=${token}&email=${email}`;
+  if (!ctx.request.body.password) {
+    const error = 'Required field: password';
+    ctx.redirect(`${redirectBaseUrl}&error=${error}`);
+    return;
+  }
+  if (!validator.isLength(ctx.request.body.password, { min: 8, max: 32 })) {
+    const error = 'Password lenght must be between 8 and 32 characters';
+    ctx.redirect(`${redirectBaseUrl}&error=${error}`);
+    return;
+  }
+  const password = ctx.request.body.password;
+  const hash = cryptoUtils.hashPassword(password);
+  const updatedUser = await knex('users')
+    .where({ email, resetPasswordToken: token })
+    .andWhere('resetPasswordTokenExpiresAt', '>', knex.raw(`now()`))
+    .update({
+      password: hash,
+      resetPasswordToken: null,
+      resetPasswordTokenExpiresAt: null,
+    });
+  if (!updatedUser) {
+    const error = 'Password reset token is invalid or has expired.';
+    ctx.redirect(`${redirectBaseUrl}&error=${error}`);
+    return;
+  }
+  return await send(ctx, `${constants.HTML_PASSWORD_UPDATE_SUCCESS_PATH}`);
+};
 
 module.exports = {
   login,
   signup,
   logout,
   verify,
-  // forgot,
-  // reset,
+  forgot,
+  showResetPage,
+  reset,
 };

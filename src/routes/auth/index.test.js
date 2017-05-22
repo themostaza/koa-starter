@@ -128,9 +128,80 @@ test('GET /auth/verify, throws 400 when the user is not found', async () => {
     .expect(400);
 });
 
-test('GET /auth/verify, succeeds with calid input', async () => {
+test('GET /auth/verify, succeeds with valid input', async () => {
   const res = await request(app.listen())
     .get(`/auth/verify?token=${mocks.user.verifyEmailToken}&email=${mocks.user.email}`)
+    .expect('Content-Type', /html/)
+    .expect(200);
+});
+
+// ========================
+//   AUTH/FORGOT
+// ========================
+test('POST /auth/forgot, throws 400 when email is invalid', async () => {
+  const res = await request(app.listen())
+    .post('/auth/forgot')
+    .send({ email: 'michaeltest.com' })
+    .expect(400);
+  expect(res.body).toEqual({});
+});
+
+test('POST /auth/forgot, throws 404 when user is not found', async () => {
+  const res = await request(app.listen())
+    .post('/auth/forgot')
+    .send({ email: 'michael@test.com' })
+    .expect(404);
+  expect(res.body).toEqual({});
+});
+
+test('POST /auth/forgot, sends a mail when succeeds', async () => {
+  const mandrillService = require('../../services/mandrill');
+  const res = await request(app.listen())
+    .post('/auth/forgot')
+    .send({ email: mocks.user.email })
+    .expect(200);
+  expect(res.body.success).toBe(true);
+  expect(mandrillService.sendPasswordResetEmail).toHaveBeenCalledTimes(1);
+});
+
+// ========================
+//   AUTH/RESET
+// ========================
+test('GET /auth/reset, throws 400 when querystring is invalid', async () => {
+  const res = await request(app.listen()).get('/auth/reset?token=test').expect(400);
+});
+
+test('GET /auth/reset, succeeds with valid input', async () => {
+  const res = await request(app.listen())
+    .get(`/auth/reset?token=${mocks.user.resetPasswordToken}&email=${mocks.user.email}`)
+    .expect('Content-Type', /html/)
+    .expect(200);
+});
+
+test('POST /auth/reset, throws 400 when input is invalid', async () => {
+  const res = await request(app.listen()).post('/auth/reset').send({ token: 'a' }).expect(400);
+});
+
+test('POST /auth/reset, redirects to 302 when password is not provided', async () => {
+  const res = await request(app.listen())
+    .post('/auth/reset')
+    .send({ token: 'test', email: 'michael@test.com' })
+    .expect('location', /error=Required field: password/)
+    .expect(302);
+});
+
+test('POST /auth/reset, redirects to 302 when user is not found', async () => {
+  const res = await request(app.listen())
+    .post('/auth/reset')
+    .send({ token: 'test', email: 'michael@test.com', password: '123456789' })
+    .expect('location', /error=Password reset token is invalid or has expired/)
+    .expect(302);
+});
+
+test('POST /auth/reset, succeeds with valid input', async () => {
+  const res = await request(app.listen())
+    .post('/auth/reset')
+    .send({ token: mocks.user.resetPasswordToken, email: mocks.user.email, password: '123456789' })
     .expect('Content-Type', /html/)
     .expect(200);
 });
