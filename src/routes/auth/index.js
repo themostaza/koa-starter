@@ -1,7 +1,9 @@
 /* @flow */
+const send = require('koa-send');
 const uuid = require('uuid');
 const validator = require('validator');
 const cryptoUtils = require('../../utils/crypto');
+const constants = require('../../config/constants');
 const mandrillService = require('../../services/mandrill');
 const knex = require('../../db/connection');
 
@@ -109,9 +111,7 @@ const verify = async ctx => {
   if (!updatedUser) {
     ctx.throw(400, 'Invalid url');
   }
-  ctx.body = {
-    success: true,
-  };
+  await send(ctx, constants.HTML_VERIFY_EMAIL_SUCCESS_PATH);
 };
 
 // ========================

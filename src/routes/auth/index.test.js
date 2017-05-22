@@ -131,6 +131,6 @@ test('GET /auth/verify, throws 400 when the user is not found', async () => {
 test('GET /auth/verify, succeeds with calid input', async () => {
   const res = await request(app.listen())
     .get(`/auth/verify?token=${mocks.user.verifyEmailToken}&email=${mocks.user.email}`)
+    .expect('Content-Type', /html/)
     .expect(200);
-  expect(res.body.success).toBe(true);
 });

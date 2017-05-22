@@ -9,6 +9,9 @@ const DATABASE_URL =
 const MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS;
 const MANDRILL_API_KEY = process.env.MANDRILL_API_KEY;
 
+const HTML_VERIFY_EMAIL_SUCCESS_PATH =
+  process.env.HTML_VERIFY_EMAIL_SUCCESS_PATH || './public_html/verify_email_success.html';
+
 module.exports = {
   IS_DEVELOPMENT,
   IS_PRODUCTION,
@@ -16,4 +19,5 @@ module.exports = {
   DATABASE_URL,
   MAIL_FROM_ADDRESS,
   MANDRILL_API_KEY,
+  HTML_VERIFY_EMAIL_SUCCESS_PATH,
 };
