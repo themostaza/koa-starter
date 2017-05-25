@@ -4,8 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint src",
+    "precommit": "lint-staged",
     "test": "jest src -i",
     "test:watch": "npm run test -- --watch",
+    "prettier": "prettier --write --print-width 100 --single-quote --trailing-comma all",
+    "reset": "rm -rf node_modules/ && npm cache clean && npm prune && yarn cache clean",
     "start-dev": "nodemon src/index.js"
   },
   "author": "",
@@ -31,8 +35,17 @@
     "eslint": "3.19.0",
     "eslint-plugin-react-app": "1.0.2",
     "flow-bin": "0.46.0",
+    "husky": "0.13.3",
     "jest": "20.0.1",
+    "lint-staged": "3.4.2",
     "nodemon": "1.11.0",
     "supertest": "3.0.0"
+  },
+  "lint-staged": {
+    "./src/**/*.js": [
+      "npm run test",
+      "npm run prettier",
+      "git add"
+    ]
   }
 }

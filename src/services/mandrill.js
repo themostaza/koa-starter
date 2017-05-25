@@ -32,9 +32,9 @@ const sendEmail = async (to, subject, text) => {
 
 const sendVerifyAccountEmail = async (to, url) => {
   const text = `
-    You are receiving this because you (or someone else) have requested the creation of a new account.\n\n
-    Please click on the following link, or paste this into your browser to complete the process:\n
-    ${url}
+    You are receiving this email because you (or someone else) have requested the creation of a new account.\n\n
+    Please click on the following link, or paste it into your browser to complete the process:\n
+    ${url} 
     If you did not request this, please ignore this email.\n
   `;
   await sendEmail(to, 'Confirm your account', text);
@@ -42,8 +42,8 @@ const sendVerifyAccountEmail = async (to, url) => {
 
 const sendPasswordResetEmail = async (to, url) => {
   const text = `
-    You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
-    Please click on the following link, or paste this into your browser to complete the process:\n
+    You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
+    Please click on the following link, or paste it into your browser to complete the process:\n
     ${url}
     If you did not request this, please ignore this email and your password will remain unchanged.\n
   `;
