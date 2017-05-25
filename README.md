@@ -18,9 +18,6 @@ N.B.: A feature should be checked as done only when paired with failing and work
 - [x] Secure routes from unauthenticated access - `middlewares/assertAuthenticated`
 - [x] Enhance Koa context with current user - `middlewares/userFromSession`
 
-**Generic security:**  
-- [x] Implement a public API key (like PARSE-APP-ID)
-
 **Authentication using session tokens (parse-server docet):**  
 - [x] Signup - `auth/signup` 
 - [x] Login - `auth/login` 
@@ -51,7 +48,6 @@ Create a `.env` file in the root directory which will let you set environment va
 Example `.env`:
 ```
 DATABASE_URL=postgres://username:password@localhost:5432/my-database
-PUBLIC_API_KEY=DEV_PUBLIC_API_KEY
 MAIL_FROM_ADDRESS=info@themostaza.com
 MANDRILL_API_KEY=secret-api-key
 HTML_VERIFY_EMAIL_SUCCESS_PATH=./public_html/verify_email_success.html

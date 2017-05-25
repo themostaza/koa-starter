@@ -30,10 +30,6 @@ const createResetPasswordToken = () => {
   return crypto.randomBytes(32 / 2).toString('hex');
 };
 
-const createTemporaryPassword = () => {
-  return crypto.randomBytes(32 / 2).toString('hex');
-};
-
 module.exports = {
   hashPassword,
   checkPassword,
@@ -41,5 +37,4 @@ module.exports = {
   createSessionToken,
   createVerifyAccountToken,
   createResetPasswordToken,
-  createTemporaryPassword,
 };

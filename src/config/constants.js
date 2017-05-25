@@ -5,7 +5,6 @@ const IS_PRODUCTION = NODE_ENV === 'production';
 const PORT = Number.parseInt(process.env.PORT || '3000', 10) || 3000;
 const DATABASE_URL =
   process.env.DATABASE_URL || 'postgres://username:password@localhost:5432/my-database';
-const PUBLIC_API_KEY = process.env.PUBLIC_API_KEY || 'DEV_PUBLIC_API_KEY';
 
 const MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS;
 const MANDRILL_API_KEY = process.env.MANDRILL_API_KEY;
@@ -27,5 +26,4 @@ module.exports = {
   HTML_VERIFY_EMAIL_SUCCESS_PATH,
   HTML_PASSWORD_UPDATE_REQUEST_PATH,
   HTML_PASSWORD_UPDATE_SUCCESS_PATH,
-  PUBLIC_API_KEY,
 };
