@@ -12,7 +12,7 @@ We've been [parse-server](https://github.com/parse-community/parse-server) users
 
 ## Features
 
-N.B.: A feature should be checked as done only when paired with failing and working tests. 
+*N.B.: A feature should be checked as done only when paired with failing and working tests*. 
 
 **Middlewares:**  
 - [x] Secure routes from unauthenticated access - `middlewares/assertAuthenticated`
