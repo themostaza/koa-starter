@@ -21,6 +21,7 @@ We've been [parse-server](https://github.com/parse-community/parse-server) users
 **Middlewares:**  
 - [x] Secure routes from unauthenticated access - `middlewares/assertAuthenticated`
 - [x] Enhance Koa context with current user - `middlewares/userFromSession`
+- [x] Handle parameters validation - `middlewares/validationHandler` and `koa-bouncer`
 
 **Authentication using session tokens (parse-server docet):**  
 - [x] Signup - `POST /auth/signup` 
