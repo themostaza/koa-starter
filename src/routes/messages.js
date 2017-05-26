@@ -2,34 +2,22 @@
 const queries = require('../db/queries');
 
 exports.createMessage = async ctx => {
-  if (!ctx.request.body) {
-    ctx.throw(400, 'Invalid request body');
-  }
-  if (!ctx.request.body.text) {
-    ctx.throw(400, 'Required field: text');
-  }
-  const message = await queries.createMessage(ctx.request.body.text, ctx.state.currentUser.id);
-  ctx.body = {
-    message: message,
-  };
+  ctx.validateBody('text').required().isString().trim();
+  const { text } = ctx.vals;
+  const { currentUser } = ctx.state;
+  const message = await queries.createMessage(text, currentUser.id);
+  ctx.body = message;
 };
 
 exports.deleteMessage = async ctx => {
-  if (!ctx.request.body) {
-    ctx.throw(400, 'Invalid request body');
-  }
-  const numOfDeletedMessages = await queries.deleteMessageById(
-    ctx.params.id,
-    ctx.state.currentUser.id,
-  );
-
+  ctx.validateParam('id').required().isString();
+  const { id } = ctx.vals;
+  const { currentUser } = ctx.state;
+  const numOfDeletedMessages = await queries.deleteMessageById(id, currentUser.id);
   if (numOfDeletedMessages === 0) {
     ctx.throw(404, 'Message non found');
   }
-
-  ctx.body = {
-    success: true,
-  };
+  ctx.body = { success: true };
 };
 
 exports.getAllMessages = async ctx => {

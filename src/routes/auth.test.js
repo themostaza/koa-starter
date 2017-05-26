@@ -26,19 +26,19 @@ afterAll(async () => {
 // ========================
 //   AUTH/SIGNUP
 // ========================
-test('POST /auth/signup, throws 400 when email is invalid', async () => {
+test('POST /auth/signup, throws 422 when email is invalid', async () => {
   const res = await request(app.listen())
     .post('/auth/signup')
     .send({ email: 'michaeltest.com', password: 'herman123' })
-    .expect(400);
+    .expect(422);
   expect(res.body).toEqual({});
 });
 
-test('POST /auth/signup, throws 400 when password is invalid', async () => {
+test('POST /auth/signup, throws 422 when password is invalid', async () => {
   const res = await request(app.listen())
     .post('/auth/signup')
     .send({ email: 'michael@test.com', password: 'herman' })
-    .expect(400);
+    .expect(422);
   expect(res.body).toEqual({});
 });
 
@@ -62,19 +62,19 @@ test('POST /auth/signup, should register a new user', async () => {
 // ========================
 //   AUTH/LOGIN
 // ========================
-test('POST /auth/login, throws 400 when email is empty', async () => {
+test('POST /auth/login, throws 422 when email is empty', async () => {
   const res = await request(app.listen())
     .post('/auth/login')
     .send({ password: 'herman123' })
-    .expect(400);
+    .expect(422);
   expect(res.body).toEqual({});
 });
 
-test('POST /auth/login, throws 400 when password is empty', async () => {
+test('POST /auth/login, throws 422 when password is empty', async () => {
   const res = await request(app.listen())
     .post('/auth/login')
     .send({ email: mocks.user.email })
-    .expect(400);
+    .expect(422);
   expect(res.body).toEqual({});
 });
 
@@ -103,7 +103,7 @@ test('POST /auth/login, logins an existing user', async () => {
 test("POST /auth/logout, doesn't logout an unauthenticated user", async () => {
   const res = await request(app.listen())
     .post('/auth/logout')
-    .set({ 'X-APP-SESSION-TOKEN': '123e4567-e89b-12d3-a456-426655440000' })
+    .set({ 'X-APP-SESSION-TOKEN': '123e4567-e89b-12d3-a456-426655442200' })
     .expect(401);
 });
 
@@ -118,14 +118,14 @@ test('POST /auth/logout, logout a logged in user', async () => {
 // ========================
 //   AUTH/VERIFY
 // ========================
-test('GET /auth/verify, throws 400 when querystring is invalid', async () => {
-  const res = await request(app.listen()).get('/auth/verify?token=test').expect(400);
+test('GET /auth/verify, throws 422 when querystring is invalid', async () => {
+  const res = await request(app.listen()).get('/auth/verify?token=test').expect(422);
 });
 
-test('GET /auth/verify, throws 400 when the user is not found', async () => {
+test('GET /auth/verify, throws 422 when the user is not found', async () => {
   const res = await request(app.listen())
     .get(`/auth/verify?token=${mocks.user.verifyEmailToken}&email=fake@fake.com`)
-    .expect(400);
+    .expect(422);
 });
 
 test('GET /auth/verify, succeeds with valid input', async () => {
@@ -138,11 +138,11 @@ test('GET /auth/verify, succeeds with valid input', async () => {
 // ========================
 //   AUTH/FORGOT
 // ========================
-test('POST /auth/forgot, throws 400 when email is invalid', async () => {
+test('POST /auth/forgot, throws 422 when email is invalid', async () => {
   const res = await request(app.listen())
     .post('/auth/forgot')
     .send({ email: 'michaeltest.com' })
-    .expect(400);
+    .expect(422);
   expect(res.body).toEqual({});
 });
 
@@ -166,8 +166,8 @@ test('POST /auth/forgot, sends a mail when succeeds', async () => {
 // ========================
 //   AUTH/RESET
 // ========================
-test('GET /auth/reset, throws 400 when querystring is invalid', async () => {
-  const res = await request(app.listen()).get('/auth/reset?token=test').expect(400);
+test('GET /auth/reset, throws 422 when querystring is invalid', async () => {
+  const res = await request(app.listen()).get('/auth/reset?token=test').expect(422);
 });
 
 test('GET /auth/reset, succeeds with valid input', async () => {
@@ -177,8 +177,8 @@ test('GET /auth/reset, succeeds with valid input', async () => {
     .expect(200);
 });
 
-test('POST /auth/reset, throws 400 when input is invalid', async () => {
-  const res = await request(app.listen()).post('/auth/reset').send({ token: 'a' }).expect(400);
+test('POST /auth/reset, throws 422 when input is invalid', async () => {
+  const res = await request(app.listen()).post('/auth/reset').send({ token: 'a' }).expect(422);
 });
 
 test('POST /auth/reset, redirects to 302 when password is not provided', async () => {

@@ -1,9 +1,9 @@
 /* @flow */
 require('dotenv').config();
+const request = require('supertest');
 
 const app = require('../app');
 const mocks = require('../mocks');
-const request = require('supertest');
 const knex = require('../db/connection');
 
 beforeEach(async () => {
@@ -24,12 +24,12 @@ afterAll(async () => {
 // ========================
 //   MESSAGES/CREATE
 // ========================
-test('POST /messages, throws 400 when text is invalid', async () => {
+test('POST /messages, throws 422 when text is invalid', async () => {
   const res = await request(app.listen())
     .post('/messages')
     .set({ 'X-APP-SESSION-TOKEN': mocks.session.token })
     .send({ text: null })
-    .expect(400);
+    .expect(422);
   expect(res.body).toEqual({});
 });
 
@@ -39,7 +39,7 @@ test('POST /messages, creates a message succesfully', async () => {
     .set({ 'X-APP-SESSION-TOKEN': mocks.session.token })
     .send({ text: 'Hello world!' })
     .expect(200);
-  expect(res.body.message.text).toBe('Hello world!');
+  expect(res.body.text).toBe('Hello world!');
 });
 
 // ========================
