@@ -31,10 +31,20 @@ exports.up = async knex => {
           WHERE "expiresAt" > NOW()
             AND "loggedOutAt" IS NULL
         ;
-      `
-    );
+      `,
+    )
+    .createTable('messages', table => {
+      table.uuid('id').unique().primary().notNullable();
+      table.uuid('userId').notNullable().references('id').inTable('users');
+      table.string('text');
+      table.timestamp('createdAt').notNullable().defaultTo(knex.raw('now()'));
+    });
 };
 
 exports.down = async knex => {
-  return knex.schema.raw(`DROP VIEW "activeSessions"`).dropTable('sessions').dropTable('users');
+  return knex.schema
+    .raw(`DROP VIEW "activeSessions"`)
+    .dropTable('sessions')
+    .dropTable('messages')
+    .dropTable('users');
 };

@@ -1,16 +1,15 @@
 /* @flow */
 const send = require('koa-send');
-const uuid = require('uuid');
 const validator = require('validator');
-const cryptoUtils = require('../../utils/crypto');
-const constants = require('../../config/constants');
-const mandrillService = require('../../services/mandrill');
-const knex = require('../../db/connection');
+const cryptoUtils = require('../utils/crypto');
+const constants = require('../config/constants');
+const mandrillService = require('../services/mandrill');
+const queries = require('../db/queries');
 
 // ========================
 //   AUTH/SIGNUP
 // ========================
-const signup = async ctx => {
+exports.signup = async ctx => {
   if (!ctx.request.body) {
     ctx.throw(400, 'Invalid request body');
   }
@@ -28,14 +27,12 @@ const signup = async ctx => {
   }
   const email = ctx.request.body.email.trim().toLowerCase();
   const password = ctx.request.body.password;
-  const isEmailAlreadyInUse = await knex('users').where({ email }).first();
-  if (isEmailAlreadyInUse) {
+  const isEmailAlreadyAvailable = await queries.isUserEmailAvailable(email);
+  if (!isEmailAlreadyAvailable) {
     ctx.throw(409, 'Email already in use');
   }
   const hash = cryptoUtils.hashPassword(password);
-  const [user] = await knex('users')
-    .insert({ id: uuid.v4(), email: email, password: hash })
-    .returning('*');
+  await queries.createUser(email, hash);
   const token = cryptoUtils.createVerifyAccountToken();
   // TODO: Update this string with a BASE_URL maybe?
   const url = `http://${ctx.headers.host}/auth/verify?token=${token}&email=${email}`;
@@ -46,7 +43,7 @@ const signup = async ctx => {
 // ========================
 //   AUTH/LOGIN
 // ========================
-const login = async ctx => {
+exports.login = async ctx => {
   if (!ctx.request.body) {
     ctx.throw(400, 'Invalid request body');
   }
@@ -58,19 +55,12 @@ const login = async ctx => {
   }
   const email = ctx.request.body.email.trim().toLowerCase();
   const password = ctx.request.body.password;
-  const user = await knex('users').where({ email }).first();
+  const user = await queries.getUserByEmail(email);
   if (!user || !cryptoUtils.checkPassword(password, user.password)) {
     ctx.throw(401, 'Invalid credentials');
   }
-  const [session] = await knex('sessions')
-    .insert({
-      id: uuid.v4(),
-      token: cryptoUtils.createSessionToken(),
-      userId: user.id,
-      ipAddress: ctx.ip,
-      userAgent: ctx.headers['user-agent'],
-    })
-    .returning('*');
+  const token = cryptoUtils.createSessionToken();
+  const session = await queries.createSession(token, user.id, ctx.ip, ctx.headers['user-agent']);
   ctx.body = {
     id: user.id,
     email: email,
@@ -83,31 +73,22 @@ const login = async ctx => {
 // ========================
 //   AUTH/LOGOUT
 // ========================
-const logout = async ctx => {
+exports.logout = async ctx => {
   const { currentSessionToken, currentUser } = ctx.state;
-  await knex('sessions')
-    .where({ id: currentSessionToken, userId: currentUser.id })
-    .update({ loggedOutAt: knex.raw(`now()`) });
+  await queries.logoutSession(currentSessionToken, currentUser.id);
   ctx.body = { success: true };
 };
 
 // ========================
 //   AUTH/VERIFY
 // ========================
-const verify = async ctx => {
+exports.verify = async ctx => {
   if (!ctx.request.query || !ctx.request.query.token || !ctx.request.query.email) {
     ctx.throw(400, 'Invalid request query');
   }
   const email = ctx.request.query.email.trim().toLowerCase();
   const token = ctx.request.query.token;
-  const updateResult = await knex('users')
-    .where({ email: email, verifyEmailToken: token })
-    .update({
-      emailVerified: true,
-      verifyEmailToken: null,
-    })
-    .returning('*');
-  const updatedUser = updateResult[0];
+  const updatedUser = await queries.confirmUserEmail(email, token);
   if (!updatedUser) {
     ctx.throw(400, 'Invalid url');
   }
@@ -117,7 +98,7 @@ const verify = async ctx => {
 // ========================
 //   AUTH/FORGOT
 // ========================
-const forgot = async ctx => {
+exports.forgot = async ctx => {
   if (!ctx.request.body) {
     ctx.throw(400, 'Invalid request body');
   }
@@ -129,10 +110,7 @@ const forgot = async ctx => {
   }
   const email = ctx.request.body.email.trim().toLowerCase();
   const token = cryptoUtils.createResetPasswordToken();
-  const updatedUser = await knex('users').where({ email }).update({
-    resetPasswordToken: token,
-    resetPasswordTokenExpiresAt: knex.raw(`NOW() + INTERVAL '1 hour'`),
-  });
+  const updatedUser = await queries.setUserResetPasswordToken(email, token);
   if (!updatedUser) {
     ctx.throw(404, 'User not found.');
   }
@@ -145,16 +123,19 @@ const forgot = async ctx => {
 };
 
 // ========================
-//   AUTH/RESET
+//   AUTH/SHOW_RESET_PAGE
 // ========================
-const showResetPage = async ctx => {
+exports.showResetPage = async ctx => {
   if (!ctx.request.query || !ctx.request.query.token || !ctx.request.query.email) {
     ctx.throw(400, 'Invalid request query');
   }
   return await send(ctx, `${constants.HTML_PASSWORD_UPDATE_REQUEST_PATH}`);
 };
 
-const reset = async ctx => {
+// ========================
+//   AUTH/RESET
+// ========================
+exports.reset = async ctx => {
   if (!ctx.request.body || !ctx.request.body.token || !ctx.request.body.email) {
     ctx.throw(400, 'Password reset token is invalid or has expired.');
   }
@@ -173,28 +154,11 @@ const reset = async ctx => {
   }
   const password = ctx.request.body.password;
   const hash = cryptoUtils.hashPassword(password);
-  const updatedUser = await knex('users')
-    .where({ email, resetPasswordToken: token })
-    .andWhere('resetPasswordTokenExpiresAt', '>', knex.raw(`now()`))
-    .update({
-      password: hash,
-      resetPasswordToken: null,
-      resetPasswordTokenExpiresAt: null,
-    });
+  const updatedUser = await queries.updateUserPassword(email, token, hash);
   if (!updatedUser) {
     const error = 'Password reset token is invalid or has expired.';
     ctx.redirect(`${redirectBaseUrl}&error=${error}`);
     return;
   }
   return await send(ctx, `${constants.HTML_PASSWORD_UPDATE_SUCCESS_PATH}`);
-};
-
-module.exports = {
-  login,
-  signup,
-  logout,
-  verify,
-  forgot,
-  showResetPage,
-  reset,
 };

@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "eslint src",
     "precommit": "lint-staged",
-    "test": "jest src -i",
+    "test": "jest src --runInBand --noStackTrace",
+    "testa": "jest src/routes/messages.test.js --runInBand --noStackTrace",
     "test:watch": "npm run test -- --watch",
     "reset": "rm -rf node_modules/ && npm cache clean && npm prune && yarn cache clean",
     "start-dev": "nodemon src/index.js"

@@ -11,4 +11,9 @@ exports.seed = async knex => {
   const session = Object.assign({}, mocks.session);
   session.createdAt = knex.raw(`now()`);
   await knex('sessions').insert(session);
+  // Message
+  await knex('messages').del();
+  const message = Object.assign({}, mocks.message);
+  session.createdAt = knex.raw(`now()`);
+  await knex('messages').insert(message);
 };

@@ -1,11 +1,12 @@
 /* @flow */
 require('dotenv').config();
 
-const app = require('../../app');
-const mocks = require('../../mocks');
+const app = require('../app');
+const mocks = require('../mocks');
 const request = require('supertest');
-const knex = require('../../db/connection');
-jest.mock('../../services/mandrill.js');
+const knex = require('../db/connection');
+const mandrillService = require('../services/mandrill');
+jest.mock('../services/mandrill.js');
 
 beforeEach(async () => {
   await knex.migrate.rollback();
@@ -50,7 +51,6 @@ test('POST /auth/signup, throws 409 when email is already in use', async () => {
 });
 
 test('POST /auth/signup, should register a new user', async () => {
-  const mandrillService = require('../../services/mandrill');
   const res = await request(app.listen())
     .post('/auth/signup')
     .send({ email: 'michael@test.com', password: 'herman123' })
@@ -100,19 +100,19 @@ test('POST /auth/login, logins an existing user', async () => {
 // ========================
 //   AUTH/LOGOUT
 // ========================
+test("POST /auth/logout, doesn't logout an unauthenticated user", async () => {
+  const res = await request(app.listen())
+    .post('/auth/logout')
+    .set({ 'X-APP-SESSION-TOKEN': '123e4567-e89b-12d3-a456-426655440000' })
+    .expect(401);
+});
+
 test('POST /auth/logout, logout a logged in user', async () => {
   const res = await request(app.listen())
     .post('/auth/logout')
     .set({ 'X-APP-SESSION-TOKEN': mocks.session.token })
     .expect(200);
   expect(res.body.success).toBe(true);
-});
-
-test("POST /auth/logout, doesn't logout an unauthenticated user", async () => {
-  const res = await request(app.listen())
-    .post('/auth/logout')
-    .set({ 'X-APP-SESSION-TOKEN': '123e4567-e89b-12d3-a456-426655440000' })
-    .expect(401);
 });
 
 // ========================
@@ -155,7 +155,6 @@ test('POST /auth/forgot, throws 404 when user is not found', async () => {
 });
 
 test('POST /auth/forgot, sends a mail when succeeds', async () => {
-  const mandrillService = require('../../services/mandrill');
   const res = await request(app.listen())
     .post('/auth/forgot')
     .send({ email: mocks.user.email })
