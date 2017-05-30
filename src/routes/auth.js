@@ -21,7 +21,7 @@ exports.signup = async ctx => {
   await queries.createUser(email, hash);
   const token = cryptoUtils.createVerifyAccountToken();
   // TODO: Update this string with a BASE_URL maybe?
-  const url = `http://${ctx.headers.host}/auth/verify?token=${token}&email=${email}`;
+  const url = `http://${ctx.headers.host}api/v1/auth/verify?token=${token}&email=${email}`;
   await mandrillService.sendVerifyAccountEmail(email, url);
   ctx.body = { success: true };
 };
@@ -40,10 +40,10 @@ exports.login = async ctx => {
   const token = cryptoUtils.createSessionToken();
   const session = await queries.createSession(token, user.id, ctx.ip, ctx.headers['user-agent']);
   ctx.body = {
-    id: user.id,
-    email: email,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
+    user: {
+      id: user.id,
+      email: user.email,
+    },
     sessionToken: session.id,
   };
 };
@@ -83,7 +83,7 @@ exports.forgot = async ctx => {
     ctx.throw(404, 'User not found.');
   }
   // TODO: Update this string with a BASE_URL maybe?
-  const url = `http://${ctx.headers.host}/auth/reset?token=${token}&email=${email}`;
+  const url = `http://${ctx.headers.host}api/v1/auth/reset?token=${token}&email=${email}`;
   await mandrillService.sendPasswordResetEmail(email, url);
   ctx.body = {
     success: true,
@@ -108,7 +108,7 @@ exports.reset = async ctx => {
   }
   const token = ctx.request.body.token;
   const email = ctx.request.body.email.trim();
-  const redirectBaseUrl = `http://${ctx.headers.host}/auth/reset?token=${token}&email=${email}`;
+  const redirectBaseUrl = `http://${ctx.headers.host}/api/v1/auth/reset?token=${token}&email=${email}`;
   if (!ctx.request.body.password) {
     const error = 'Required field: password';
     ctx.redirect(`${redirectBaseUrl}&error=${error}`);

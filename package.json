@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "migrate:latest": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback",
+    "seed:run": "knex seed:run",
     "lint": "eslint src",
     "precommit": "lint-staged",
     "test": "jest src --runInBand --noStackTrace",
@@ -20,6 +23,7 @@
     "koa": "2.2.0",
     "koa-body": "2.0.1",
     "koa-bouncer": "6.0.0",
+    "koa-helmet": "3.1.0",
     "koa-logger": "3.0.0",
     "koa-router": "7.2.0",
     "koa-send": "4.1.0",

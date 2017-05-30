@@ -26,8 +26,8 @@ afterAll(async () => {
 // ========================
 test('POST /messages, throws 422 when text is invalid', async () => {
   const res = await request(app.listen())
-    .post('/messages')
-    .set({ 'X-APP-SESSION-TOKEN': mocks.session.token })
+    .post('/api/v1/messages')
+    .set({ 'X-App-Session-Token': mocks.session.token })
     .send({ text: null })
     .expect(422);
   expect(res.body).toEqual({});
@@ -35,8 +35,8 @@ test('POST /messages, throws 422 when text is invalid', async () => {
 
 test('POST /messages, creates a message succesfully', async () => {
   const res = await request(app.listen())
-    .post('/messages')
-    .set({ 'X-APP-SESSION-TOKEN': mocks.session.token })
+    .post('/api/v1/messages')
+    .set({ 'X-App-Session-Token': mocks.session.token })
     .send({ text: 'Hello world!' })
     .expect(200);
   expect(res.body.text).toBe('Hello world!');
@@ -47,8 +47,8 @@ test('POST /messages, creates a message succesfully', async () => {
 // ========================
 test('DELETE /messages, deletes a message successfully', async () => {
   const res = await request(app.listen())
-    .delete(`/messages/${mocks.message.id}`)
-    .set({ 'X-APP-SESSION-TOKEN': mocks.session.token })
+    .delete(`/api/v1/messages/${mocks.message.id}`)
+    .set({ 'X-App-Session-Token': mocks.session.token })
     .expect(200);
   expect(res.body.success).toBe(true);
 });
@@ -58,8 +58,8 @@ test('DELETE /messages, deletes a message successfully', async () => {
 // ========================
 test('GET /messages, gets all the messages', async () => {
   const res = await request(app.listen())
-    .get('/messages')
-    .set({ 'X-APP-SESSION-TOKEN': mocks.session.token })
+    .get('/api/v1/messages')
+    .set({ 'X-App-Session-Token': mocks.session.token })
     .expect(200);
   expect(res.body.length).toBe(1);
   expect(res.body[0].id).toEqual(mocks.message.id);

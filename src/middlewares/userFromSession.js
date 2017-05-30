@@ -2,7 +2,7 @@
 const queries = require('../db/queries');
 
 module.exports = async (ctx, next) => {
-  const sessionToken = ctx.headers['x-app-session-token'];
+  const sessionToken = ctx.headers['x-app-session-token'] || ctx.headers['X-App-Session-Token'];
   if (!sessionToken) {
     return next();
   }

@@ -32,7 +32,7 @@ test("doesn't do anything if a session token is not provided", async () => {
 
 test('throws 401 if the sessionToken is not found', async () => {
   const ctx = {
-    headers: { 'x-app-session-token': '123456789' },
+    headers: { 'X-App-Session-Token': '123456789' },
     state: {},
     throw: jest.fn(),
   };
@@ -45,7 +45,7 @@ test('throws 401 if the sessionToken is not found', async () => {
 
 test("sets the user's info in state when authenticated", async () => {
   const ctx = {
-    headers: { 'x-app-session-token': mocks.session.token },
+    headers: { 'X-App-Session-Token': mocks.session.token },
     state: {},
     throw: jest.fn(),
   };

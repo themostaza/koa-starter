@@ -9,16 +9,16 @@ router.get('/', async ctx => {
   return ctx;
 });
 
-router.post('/auth/login', authRoutes.login);
-router.post('/auth/signup', authRoutes.signup);
-router.post('/auth/logout', assertAuthenticated, authRoutes.logout);
-router.get('/auth/verify', authRoutes.verify);
-router.post('/auth/forgot', authRoutes.forgot);
-router.get('/auth/reset', authRoutes.showResetPage);
-router.post('/auth/reset', authRoutes.reset);
+router.post('/api/v1/auth/login', authRoutes.login);
+router.post('/api/v1/auth/signup', authRoutes.signup);
+router.post('/api/v1/auth/logout', assertAuthenticated, authRoutes.logout);
+router.get('/api/v1/auth/verify', authRoutes.verify);
+router.post('/api/v1/auth/forgot', authRoutes.forgot);
+router.get('/api/v1/auth/reset', authRoutes.showResetPage);
+router.post('/api/v1/auth/reset', authRoutes.reset);
 
-router.post('/messages', assertAuthenticated, messagesRoutes.createMessage);
-router.delete('/messages/:id', assertAuthenticated, messagesRoutes.deleteMessage);
-router.get('/messages', assertAuthenticated, messagesRoutes.getAllMessages);
+router.post('/api/v1/messages', assertAuthenticated, messagesRoutes.createMessage);
+router.delete('/api/v1/messages/:id', assertAuthenticated, messagesRoutes.deleteMessage);
+router.get('/api/v1/messages', assertAuthenticated, messagesRoutes.getAllMessages);
 
 module.exports = router;

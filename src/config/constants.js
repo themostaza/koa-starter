@@ -1,7 +1,8 @@
 /* @flow */
 const NODE_ENV = process.env.NODE_ENV || 'development';
-const IS_DEVELOPMENT = NODE_ENV === 'development';
-const IS_PRODUCTION = NODE_ENV === 'production';
+const IS_ENV_DEVELOPMENT = NODE_ENV === 'development';
+const IS_ENV_PRODUCTION = NODE_ENV === 'production';
+const IS_ENV_TEST = NODE_ENV === 'test';
 const PORT = Number.parseInt(process.env.PORT || '3000', 10) || 3000;
 const DATABASE_URL =
   process.env.DATABASE_URL || 'postgres://username:password@localhost:5432/my-database';
@@ -17,8 +18,9 @@ const HTML_PASSWORD_UPDATE_SUCCESS_PATH =
   process.env.HTML_PASSWORD_UPDATE_SUCCESS_PATH || './public_html/password_update_success.html';
 
 module.exports = {
-  IS_DEVELOPMENT,
-  IS_PRODUCTION,
+  IS_ENV_DEVELOPMENT,
+  IS_ENV_PRODUCTION,
+  IS_ENV_TEST,
   PORT,
   DATABASE_URL,
   MAIL_FROM_ADDRESS,
