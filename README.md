@@ -25,20 +25,20 @@ We've been [parse-server](https://github.com/parse-community/parse-server) users
 - [x] Handled cross domain requests - `middlewares/allowCrossDomain`
 
 **Authentication using session tokens (parse-server docet):**  
-- [x] Signup - `POST /auth/signup` 
-- [x] Login - `POST /auth/login` 
-- [x] Logout - `POST /auth/logout`
-- [x] Email Verification - `GET /auth/verify`
-- [x] Password reset email request - `POST /auth/forgot`
-- [x] Password reset page - `GET /auth/reset`
-- [x] Password reset handling - `POST /auth/reset`
+- [x] Signup - `POST /api/v1/auth/signup` 
+- [x] Login - `POST /api/v1/auth/login` 
+- [x] Logout - `POST /api/v1/auth/logout`
+- [x] Email Verification - `GET /api/v1/auth/verify`
+- [x] Password reset email request - `POST /api/v1/auth/forgot`
+- [x] Password reset page - `GET /api/v1/auth/reset`
+- [x] Password reset handling - `POST /api/v1/auth/reset`
 
 **Authorization: WIP**  
 
 **Entities CRUD:**  
-- [x] Message: create - `POST /messages` 
-- [x] Message: delete - `DELETE /messages/:id` 
-- [x] Message: get all - `GET /messages` 
+- [x] Message: create - `POST /api/v1/messages` 
+- [x] Message: delete - `DELETE /api/v1/messages/:id` 
+- [x] Message: get all - `GET /api/v1/messages` 
 - [ ] ...other
 
 **Utilities:**  
