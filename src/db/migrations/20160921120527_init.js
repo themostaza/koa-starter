@@ -31,7 +31,7 @@ exports.up = async knex => {
           WHERE "expiresAt" > NOW()
             AND "loggedOutAt" IS NULL
         ;
-      `,
+      `
     )
     .createTable('messages', table => {
       table.uuid('id').unique().primary().notNullable();

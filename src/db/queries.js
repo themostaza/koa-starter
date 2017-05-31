@@ -19,7 +19,7 @@ exports.getUserBySessionToken = async sessionToken => {
       )
     )
     RETURNING *
-  `,
+  `
   );
   return updateResult.rows.length > 0 ? updateResult.rows[0] : null;
 };
