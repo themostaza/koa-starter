@@ -44,7 +44,7 @@ exports.login = async ctx => {
       id: user.id,
       email: user.email,
     },
-    sessionToken: session.id,
+    sessionToken: token,
   };
 };
 
