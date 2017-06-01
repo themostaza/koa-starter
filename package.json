@@ -9,7 +9,7 @@
     "seed:run": "knex seed:run",
     "lint": "eslint src",
     "precommit": "lint-staged",
-    "test": "jest src --runInBand --noStackTrace",
+    "test": "jest src --runInBand --noStackTrace --forceExit",
     "test:watch": "npm run test -- --watch",
     "reset": "rm -rf node_modules/ && npm cache clean && npm prune && yarn cache clean",
     "start-dev": "nodemon src/index.js"
