@@ -12,7 +12,7 @@
     "db:initialize": "npm run db:rollback && npm run db:latest && npm run db:seed",
     "lint": "eslint src",
     "precommit": "lint-staged",
-    "test": "jest src --runInBand --noStackTrace",
+    "test": "jest src --runInBand --noStackTrace --forceExit",
     "test:watch": "npm run test -- --watch",
     "reset": "rm -rf node_modules/ && npm prune && yarn cache clean"
   },
