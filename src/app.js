@@ -6,8 +6,7 @@ const helmetMiddleware = require('koa-helmet')();
 const koaBouncer = require('koa-bouncer');
 
 const router = require('./routes');
-const userFromSessionMiddleware = require('./middlewares/userFromSession');
-const validationHandlerMiddleware = require('./middlewares/validationHandler');
+const errorHandlerMiddleware = require('./middlewares/errorHandler');
 const allowCrossDomainMiddleware = require('./middlewares/allowCrossDomain');
 
 const constants = require('./config/constants');
@@ -20,10 +19,9 @@ if (!constants.IS_ENV_TEST) {
 }
 app.use(helmetMiddleware);
 app.use(allowCrossDomainMiddleware);
-app.use(validationHandlerMiddleware);
+app.use(errorHandlerMiddleware);
 app.use(bodyMiddleware);
 app.use(koaBouncer.middleware());
-app.use(userFromSessionMiddleware);
 app.use(router.routes());
 app.use(router.allowedMethods());
 

@@ -31,7 +31,6 @@ test('POST /auth/signup, throws 422 when email is invalid', async () => {
     .post('/api/v1/auth/signup')
     .send({ email: 'michaeltest.com', password: 'herman123' })
     .expect(422);
-  expect(res.body).toEqual({});
 });
 
 test('POST /auth/signup, throws 422 when password is invalid', async () => {
@@ -39,7 +38,6 @@ test('POST /auth/signup, throws 422 when password is invalid', async () => {
     .post('/api/v1/auth/signup')
     .send({ email: 'michael@test.com', password: 'herman' })
     .expect(422);
-  expect(res.body).toEqual({});
 });
 
 test('POST /auth/signup, throws 409 when email is already in use', async () => {
@@ -47,7 +45,6 @@ test('POST /auth/signup, throws 409 when email is already in use', async () => {
     .post('/api/v1/auth/signup')
     .send({ email: mocks.user.email, password: 'herman123' })
     .expect(409);
-  expect(res.body).toEqual({});
 });
 
 test('POST /auth/signup, should register a new user', async () => {
@@ -67,7 +64,6 @@ test('POST /auth/login, throws 422 when email is empty', async () => {
     .post('/api/v1/auth/login')
     .send({ password: 'herman123' })
     .expect(422);
-  expect(res.body).toEqual({});
 });
 
 test('POST /auth/login, throws 422 when password is empty', async () => {
@@ -75,7 +71,6 @@ test('POST /auth/login, throws 422 when password is empty', async () => {
     .post('/api/v1/auth/login')
     .send({ email: mocks.user.email })
     .expect(422);
-  expect(res.body).toEqual({});
 });
 
 test('POST /auth/login, throws 401 when credentials are invalid', async () => {
@@ -83,7 +78,6 @@ test('POST /auth/login, throws 401 when credentials are invalid', async () => {
     .post('/api/v1/auth/login')
     .send({ email: mocks.user.email, password: 'asdfasdf' })
     .expect(401);
-  expect(res.body).toEqual({});
 });
 
 test('POST /auth/login, logins an existing user', async () => {
@@ -142,7 +136,6 @@ test('POST /auth/forgot, throws 422 when email is invalid', async () => {
     .post('/api/v1/auth/forgot')
     .send({ email: 'michaeltest.com' })
     .expect(422);
-  expect(res.body).toEqual({});
 });
 
 test('POST /auth/forgot, throws 404 when user is not found', async () => {
@@ -150,7 +143,6 @@ test('POST /auth/forgot, throws 404 when user is not found', async () => {
     .post('/api/v1/auth/forgot')
     .send({ email: 'michael@test.com' })
     .expect(404);
-  expect(res.body).toEqual({});
 });
 
 test('POST /auth/forgot, sends a mail when succeeds', async () => {

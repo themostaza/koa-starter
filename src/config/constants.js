@@ -5,7 +5,7 @@ const IS_ENV_PRODUCTION = NODE_ENV === 'production';
 const IS_ENV_TEST = NODE_ENV === 'test';
 const PORT = Number.parseInt(process.env.PORT || '3000', 10) || 3000;
 const DATABASE_URL =
-  process.env.DATABASE_URL || 'postgres://username:password@localhost:5432/my-database';
+  process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/postgres';
 
 const MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS;
 const MANDRILL_API_KEY = process.env.MANDRILL_API_KEY;

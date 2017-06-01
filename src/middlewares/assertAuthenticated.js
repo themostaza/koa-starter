@@ -1,9 +1,19 @@
 /* @flow */
+const queries = require('../db/queries');
+
 module.exports = async (ctx, next) => {
-  if (!ctx.state.currentUser || !ctx.state.currentUser.id || !ctx.state.currentSessionToken) {
-    ctx.throw(401);
+  const sessionToken = ctx.headers['x-app-session-token'] || ctx.headers['X-App-Session-Token'];
+  if (!sessionToken) {
+    ctx.throw(401, 'Missing session token');
+    return;
+  }
+  const updatedUser = await queries.getUserBySessionToken(sessionToken);
+  if (!updatedUser) {
+    ctx.throw(401, 'Session expired, please log-in again');
     return;
   } else {
+    ctx.state.currentUser = updatedUser;
+    ctx.state.currentSessionToken = sessionToken;
     return next();
   }
 };

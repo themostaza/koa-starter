@@ -1,6 +1,7 @@
 /* @flow */
 require('dotenv').config();
-const DATABASE_URL = process.env.DATABASE_URL;
+const constants = require('./src/config/constants');
+const DATABASE_URL = constants.DATABASE_URL;
 
 module.exports = {
   client: 'postgresql',

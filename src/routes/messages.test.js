@@ -30,7 +30,6 @@ test('POST /messages, throws 422 when text is invalid', async () => {
     .set({ 'X-App-Session-Token': mocks.session.token })
     .send({ text: null })
     .expect(422);
-  expect(res.body).toEqual({});
 });
 
 test('POST /messages, creates a message succesfully', async () => {
