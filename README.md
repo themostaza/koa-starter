@@ -19,10 +19,11 @@ We've been [parse-server](https://github.com/parse-community/parse-server) users
 *N.B.: A feature should be checked as done only when paired with failing and working tests*. 
 
 **Middlewares:**  
-- [x] Secured routes from unauthenticated access - `middlewares/assertAuthenticated`
+- [x] Secured routes from unauthenticated access - `middlewares/ensureAuthenticated`
 - [x] Enhanced Koa context with current user - `middlewares/userFromSession`
 - [x] Handled parameters validation - `middlewares/validationHandler` and `koa-bouncer`
 - [x] Handled cross domain requests - `middlewares/allowCrossDomain`
+- [x] Add defaults variables to the response - `middlewares/responseDefaults`
 
 **Authentication using session tokens (parse-server docet):**  
 - [x] Signup - `POST /api/v1/auth/signup` 
