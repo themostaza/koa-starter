@@ -9,7 +9,7 @@ test('throws 422 when a koa-bouncer validation error happens', async () => {
     throw new koaBouncer.ValidationError('test', 'Test error message');
   };
   await errorHandler(ctx, next);
-  expect(ctx.body).toEqual({ status: 422, message: 'Test error message' });
+  expect(ctx.body.error).toEqual({ status: 422, message: 'Test error message' });
 });
 
 test('throws 500 when a generic error happens', async () => {
@@ -18,5 +18,5 @@ test('throws 500 when a generic error happens', async () => {
     throw new Error('Generic error');
   };
   await errorHandler(ctx, next);
-  expect(ctx.body).toEqual({ status: 500, message: 'Generic error' });
+  expect(ctx.body.error).toEqual({ status: 500, message: 'Generic error' });
 });

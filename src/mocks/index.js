@@ -10,6 +10,7 @@ const user = {
   email: 'jeremy@test.com',
   password: hash,
   verifyEmailToken: 'n283r928j2029jjjflsakdfjasdf03',
+  emailVerified: true,
   resetPasswordToken: 'jid32soidji201s0n019rdju010dj10',
   resetPasswordTokenExpiresAt: knex.raw(`NOW() + INTERVAL '1 hour'`),
 };

@@ -6,9 +6,9 @@ const constants = require('../config/constants');
 const mandrillService = require('../services/mandrill');
 const queries = require('../db/queries');
 
-// ========================
-//   AUTH/SIGNUP
-// ========================
+// ==========================================
+//   POST /auth/signup
+// ==========================================
 exports.signup = async ctx => {
   ctx.validateBody('email').required().isEmail().trim();
   ctx.validateBody('password').required().isLength(8, 32, 'Password must be 8-32 chars');
@@ -18,28 +18,27 @@ exports.signup = async ctx => {
     ctx.throw(409, 'Email already in use');
   }
   const hash = cryptoUtils.hashPassword(password);
-  await queries.createUser(email, hash);
   const token = cryptoUtils.createVerifyAccountToken();
-  // TODO: Update this string with a BASE_URL maybe?
+  await queries.createUser(email, hash, token);
   const url = `http://${ctx.headers.host}api/v1/auth/verify?token=${token}&email=${email}`;
   await mandrillService.sendVerifyAccountEmail(email, url);
-  ctx.body = { success: true };
+  ctx.body.data = { success: true };
 };
 
-// ========================
-//   AUTH/LOGIN
-// ========================
+// ==========================================
+//   POST /auth/login
+// ==========================================
 exports.login = async ctx => {
-  ctx.validateBody('email').required().isString().trim();
+  ctx.validateBody('email').required().isString().trim().tap(x => x.toLowerCase());
   ctx.validateBody('password').required().isString();
   const { email, password } = ctx.vals;
-  const user = await queries.getUserByEmail(email);
+  const user = await queries.getUserForLogin(email);
   if (!user || !cryptoUtils.checkPassword(password, user.password)) {
     ctx.throw(401, 'Invalid credentials');
   }
   const token = cryptoUtils.createSessionToken();
-  const session = await queries.createSession(token, user.id, ctx.ip, ctx.headers['user-agent']);
-  ctx.body = {
+  await queries.createSession(token, user.id, ctx.ip, ctx.headers['user-agent']);
+  ctx.body.data = {
     user: {
       id: user.id,
       email: user.email,
@@ -48,21 +47,21 @@ exports.login = async ctx => {
   };
 };
 
-// ========================
-//   AUTH/LOGOUT
-// ========================
+// ==========================================
+//   POST /auth/logout
+// ==========================================
 exports.logout = async ctx => {
   const { currentSessionToken, currentUser } = ctx.state;
   await queries.logoutSession(currentSessionToken, currentUser.id);
-  ctx.body = { success: true };
+  ctx.body.data = { success: true };
 };
 
-// ========================
-//   AUTH/VERIFY
-// ========================
+// ==========================================
+//   GET /auth/verify
+// ==========================================
 exports.verify = async ctx => {
   ctx.validateQuery('token').required().isString();
-  ctx.validateQuery('email').required().isString().trim();
+  ctx.validateQuery('email').required().isString().trim().tap(x => x.toLowerCase());
   const { token, email } = ctx.vals;
   const updatedUser = await queries.confirmUserEmail(email, token);
   if (!updatedUser) {
@@ -71,44 +70,42 @@ exports.verify = async ctx => {
   await send(ctx, constants.HTML_VERIFY_EMAIL_SUCCESS_PATH);
 };
 
-// ========================
-//   AUTH/FORGOT
-// ========================
+// ==========================================
+//   POST /auth/forgot
+// ==========================================
 exports.forgot = async ctx => {
-  ctx.validateBody('email').required().isEmail().trim();
+  ctx.validateBody('email').required().isEmail().trim().tap(x => x.toLowerCase());
   const { email } = ctx.vals;
   const token = cryptoUtils.createResetPasswordToken();
   const updatedUser = await queries.setUserResetPasswordToken(email, token);
   if (!updatedUser) {
     ctx.throw(404, 'User not found.');
   }
-  // TODO: Update this string with a BASE_URL maybe?
-  const url = `http://${ctx.headers.host}api/v1/auth/reset?token=${token}&email=${email}`;
+  const url = `http://${ctx.headers.host}/api/v1/auth/reset?token=${token}&email=${email}`;
   await mandrillService.sendPasswordResetEmail(email, url);
-  ctx.body = {
-    success: true,
-  };
+  ctx.body.data = { success: true };
 };
 
-// ========================
-//   AUTH/SHOW_RESET_PAGE
-// ========================
+// ==========================================
+//   GET /auth/reset
+// ==========================================
 exports.showResetPage = async ctx => {
   ctx.validateQuery('token').required().isString();
-  ctx.validateQuery('email').required().isString().trim();
+  ctx.validateQuery('email').required().isString().trim().tap(x => x.toLowerCase());
   return await send(ctx, `${constants.HTML_PASSWORD_UPDATE_REQUEST_PATH}`);
 };
 
-// ========================
-//   AUTH/RESET
-// ========================
+// ==========================================
+//   POST /auth/reset
+// ==========================================
 exports.reset = async ctx => {
   if (!ctx.request.body || !ctx.request.body.token || !ctx.request.body.email) {
     ctx.throw(422, 'Password reset token is invalid or has expired.');
   }
   const token = ctx.request.body.token;
-  const email = ctx.request.body.email.trim();
-  const redirectBaseUrl = `http://${ctx.headers.host}/api/v1/auth/reset?token=${token}&email=${email}`;
+  const email = ctx.request.body.email.trim().toLowerCase();
+  const redirectBaseUrl = `http://${ctx.headers
+    .host}/api/v1/auth/reset?token=${token}&email=${email}`;
   if (!ctx.request.body.password) {
     const error = 'Required field: password';
     ctx.redirect(`${redirectBaseUrl}&error=${error}`);

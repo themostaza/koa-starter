@@ -24,19 +24,19 @@ exports.getUserBySessionToken = async sessionToken => {
   return updateResult.rows.length > 0 ? updateResult.rows[0] : null;
 };
 
-exports.getUserByEmail = async email => {
-  const user = await knex('users').where({ email }).first();
+exports.getUserForLogin = async email => {
+  const user = await knex('users').where('email', email).where('emailVerified', true).first();
   return user;
 };
 
 exports.isUserEmailAvailable = async email => {
-  const user = await exports.getUserByEmail(email);
+  const user = await knex('users').where('email', email).first();
   return user === null || user === undefined;
 };
 
-exports.createUser = async (email, password) => {
+exports.createUser = async (email, password, verifyEmailToken) => {
   const [user] = await knex('users')
-    .insert({ id: uuid.v4(), email: email, password: password })
+    .insert({ id: uuid.v4(), email: email, password: password, verifyEmailToken: verifyEmailToken })
     .returning('*');
   return user;
 };
