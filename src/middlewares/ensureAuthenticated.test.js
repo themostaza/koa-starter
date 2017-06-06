@@ -2,7 +2,7 @@
 require('dotenv').config();
 const knex = require('../db/connection');
 const mocks = require('../mocks');
-const assertAuthenticated = require('./assertAuthenticated');
+const ensureAuthenticated = require('./ensureAuthenticated');
 
 beforeEach(async () => {
   await knex.migrate.rollback();
@@ -25,7 +25,7 @@ test('throws 401 if the sessionToken is not provided', async () => {
     throw: jest.fn(),
   };
   const next = jest.fn();
-  await assertAuthenticated(ctx, next);
+  await ensureAuthenticated(ctx, next);
   expect(next).toHaveBeenCalledTimes(0);
   expect(ctx.throw).toHaveBeenCalledWith(401, 'Missing session token');
   expect(ctx.state).toEqual({});
@@ -38,7 +38,7 @@ test('throws 401 if the sessionToken is not found', async () => {
     throw: jest.fn(),
   };
   const next = jest.fn();
-  await assertAuthenticated(ctx, next);
+  await ensureAuthenticated(ctx, next);
   expect(next).toHaveBeenCalledTimes(0);
   expect(ctx.throw).toHaveBeenCalledWith(401, 'Session expired, please log-in again');
   expect(ctx.state).toEqual({});
@@ -51,7 +51,7 @@ test("sets the user's info in state when authenticated", async () => {
     throw: jest.fn(),
   };
   const next = jest.fn();
-  await assertAuthenticated(ctx, next);
+  await ensureAuthenticated(ctx, next);
   expect(next).toHaveBeenCalledTimes(1);
   expect(ctx.throw).toHaveBeenCalledTimes(0);
   expect(ctx.state.currentSessionToken).toBe(mocks.session.token);

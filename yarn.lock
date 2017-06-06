@@ -1386,11 +1386,7 @@ form-data@^2.1.1, form-data@~2.1.1:
     combined-stream "^1.0.5"
     mime-types "^2.1.12"
 
-formidable@1.0.17:
-  version "1.0.17"
-  resolved "https://registry.yarnpkg.com/formidable/-/formidable-1.0.17.tgz#ef5491490f9433b705faa77249c99029ae348559"
-
-formidable@^1.1.1:
+formidable@1.1.1, formidable@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/formidable/-/formidable-1.1.1.tgz#96b8886f7c3c3508b932d6bd70c4d3a88f35f1a9"
 
@@ -2404,12 +2400,12 @@ knex@0.13.0:
     uuid "^3.0.0"
     v8flags "^2.0.2"
 
-koa-body@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/koa-body/-/koa-body-2.0.1.tgz#87a171d5f8d74b354e7d68abf3ad510999b15ce3"
+koa-body@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/koa-body/-/koa-body-2.1.0.tgz#e7fbad752b9b14972dd2a10159fe9ccbbb94fc4f"
   dependencies:
     co-body "*"
-    formidable "1.0.17"
+    formidable "1.1.1"
 
 koa-bouncer@6.0.0:
   version "6.0.0"
