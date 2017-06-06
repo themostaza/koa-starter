@@ -7,8 +7,8 @@ const PORT = Number.parseInt(process.env.PORT || '3000', 10) || 3000;
 const DATABASE_URL =
   process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/postgres';
 
-const MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS;
-const MANDRILL_API_KEY = process.env.MANDRILL_API_KEY;
+const MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS || '123456789';
+const MANDRILL_API_KEY = process.env.MANDRILL_API_KEY || 'test@test.com';
 
 const HTML_VERIFY_EMAIL_SUCCESS_PATH =
   process.env.HTML_VERIFY_EMAIL_SUCCESS_PATH || './public_html/verify_email_success.html';
