@@ -43,7 +43,7 @@ We've been [parse-server](https://github.com/parse-community/parse-server) users
 - [ ] ...other
 
 **Utilities:**  
-- [x] Logging (not in TEST) 
+- [x] Simple logging (not in TEST) 
 
 ## Setup
 
