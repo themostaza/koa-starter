@@ -23,7 +23,6 @@ We've been [parse-server](https://github.com/parse-community/parse-server) users
 - [x] Enhanced Koa context with current user - `middlewares/userFromSession`
 - [x] Handled parameters validation - `middlewares/validationHandler` and `koa-bouncer`
 - [x] Handled cross domain requests - `middlewares/allowCrossDomain`
-- [x] Add defaults variables to the response - `middlewares/responseDefaults`
 
 **Authentication using session tokens (parse-server docet):**  
 - [x] Signup - `POST /api/v1/auth/signup` 
