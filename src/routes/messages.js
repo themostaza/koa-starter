@@ -9,8 +9,8 @@ exports.createMessage = async ctx => {
   const { text } = ctx.vals;
   const { currentUser } = ctx.state;
   const message = await queries.createMessage(text, currentUser.id);
-  ctx.body.data = {
-    message: message,
+  ctx.body = {
+    data: { message: message },
   };
 };
 
@@ -25,7 +25,9 @@ exports.deleteMessage = async ctx => {
   if (numOfDeletedMessages === 0) {
     ctx.throw(404, 'Message non found');
   }
-  ctx.body.data = { success: true };
+  ctx.body = {
+    data: { success: true },
+  };
 };
 
 // ==========================================
@@ -33,7 +35,9 @@ exports.deleteMessage = async ctx => {
 // ==========================================
 exports.getAllMessages = async ctx => {
   const messages = await queries.getAllMessages();
-  ctx.body.data = {
-    messages: messages,
+  ctx.body = {
+    data: {
+      messages: messages,
+    },
   };
 };

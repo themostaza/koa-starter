@@ -22,7 +22,9 @@ exports.signup = async ctx => {
   await queries.createUser(email, hash, token);
   const url = `http://${ctx.headers.host}api/v1/auth/verify?token=${token}&email=${email}`;
   await mandrillService.sendVerifyAccountEmail(email, url);
-  ctx.body.data = { success: true };
+  ctx.body = {
+    data: { success: true },
+  };
 };
 
 // ==========================================
@@ -38,12 +40,11 @@ exports.login = async ctx => {
   }
   const token = cryptoUtils.createSessionToken();
   await queries.createSession(token, user.id, ctx.ip, ctx.headers['user-agent']);
-  ctx.body.data = {
-    user: {
-      id: user.id,
-      email: user.email,
+  ctx.body = {
+    data: {
+      user: { id: user.id, email: user.email },
+      sessionToken: token,
     },
-    sessionToken: token,
   };
 };
 
@@ -53,7 +54,9 @@ exports.login = async ctx => {
 exports.logout = async ctx => {
   const { currentSessionToken, currentUser } = ctx.state;
   await queries.logoutSession(currentSessionToken, currentUser.id);
-  ctx.body.data = { success: true };
+  ctx.body = {
+    data: { success: true },
+  };
 };
 
 // ==========================================
@@ -83,7 +86,9 @@ exports.forgot = async ctx => {
   }
   const url = `http://${ctx.headers.host}/api/v1/auth/reset?token=${token}&email=${email}`;
   await mandrillService.sendPasswordResetEmail(email, url);
-  ctx.body.data = { success: true };
+  ctx.body = {
+    data: { success: true },
+  };
 };
 
 // ==========================================

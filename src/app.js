@@ -8,7 +8,6 @@ const koaBouncer = require('koa-bouncer');
 const router = require('./routes');
 const errorHandlerMiddleware = require('./middlewares/errorHandler');
 const allowCrossDomainMiddleware = require('./middlewares/allowCrossDomain');
-const responseDefaultsMiddleware = require('./middlewares/responseDefaults');
 
 const constants = require('./config/constants');
 
@@ -20,7 +19,6 @@ if (!constants.IS_ENV_TEST) {
 }
 app.use(helmetMiddleware);
 app.use(allowCrossDomainMiddleware);
-app.use(responseDefaultsMiddleware);
 app.use(errorHandlerMiddleware);
 app.use(bodyMiddleware);
 app.use(koaBouncer.middleware());
