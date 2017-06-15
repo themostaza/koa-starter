@@ -54,7 +54,7 @@ test("sets the user's info in state when authenticated", async () => {
   await ensureAuthenticated(ctx, next);
   expect(next).toHaveBeenCalledTimes(1);
   expect(ctx.throw).toHaveBeenCalledTimes(0);
-  expect(ctx.state.currentSessionToken).toBe(mocks.session.token);
-  expect(ctx.state.currentUser.id).toBe(mocks.user.id);
-  expect(ctx.state.currentUser.email).toBe(mocks.user.email);
+  expect(ctx.state.sessionToken).toBe(mocks.session.token);
+  expect(ctx.state.user.id).toBe(mocks.user.id);
+  expect(ctx.state.user.email).toBe(mocks.user.email);
 });

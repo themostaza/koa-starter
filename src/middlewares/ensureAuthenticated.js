@@ -12,8 +12,8 @@ module.exports = async (ctx, next) => {
     ctx.throw(401, 'Session expired, please log-in again');
     return;
   } else {
-    ctx.state.currentUser = updatedUser;
-    ctx.state.currentSessionToken = sessionToken;
+    ctx.state.user = updatedUser;
+    ctx.state.sessionToken = sessionToken;
     return next();
   }
 };

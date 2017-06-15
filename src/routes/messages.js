@@ -7,8 +7,8 @@ const queries = require('../db/queries');
 exports.createMessage = async ctx => {
   ctx.validateBody('text').required().isString().trim();
   const { text } = ctx.vals;
-  const { currentUser } = ctx.state;
-  const message = await queries.createMessage(text, currentUser.id);
+  const { user } = ctx.state;
+  const message = await queries.createMessage(text, user.id);
   ctx.body = {
     data: { message: message },
   };
@@ -20,8 +20,8 @@ exports.createMessage = async ctx => {
 exports.deleteMessage = async ctx => {
   ctx.validateParam('id').required().isString();
   const { id } = ctx.vals;
-  const { currentUser } = ctx.state;
-  const numOfDeletedMessages = await queries.deleteMessageById(id, currentUser.id);
+  const { user } = ctx.state;
+  const numOfDeletedMessages = await queries.deleteMessageById(id, user.id);
   if (numOfDeletedMessages === 0) {
     ctx.throw(404, 'Message non found');
   }

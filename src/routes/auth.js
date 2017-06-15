@@ -52,8 +52,8 @@ exports.login = async ctx => {
 //   POST /auth/logout
 // ==========================================
 exports.logout = async ctx => {
-  const { currentSessionToken, currentUser } = ctx.state;
-  await queries.logoutSession(currentSessionToken, currentUser.id);
+  const { sessionToken, user } = ctx.state;
+  await queries.logoutSession(sessionToken, user.id);
   ctx.body = {
     data: { success: true },
   };
