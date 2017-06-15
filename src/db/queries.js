@@ -15,11 +15,14 @@ exports.getUserBySessionToken = async sessionToken => {
       WHERE u.id = (
         SELECT s."userId"
         FROM "activeSessions" s
-        WHERE s.token = '${sessionToken}'
+        WHERE s.token = :sessionToken
       )
     )
     RETURNING *
-  `
+  `,
+    {
+      sessionToken,
+    }
   );
   return updateResult.rows.length > 0 ? updateResult.rows[0] : null;
 };
