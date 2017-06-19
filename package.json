@@ -27,12 +27,12 @@
     "koa-bouncer": "6.0.0",
     "koa-helmet": "3.2.0",
     "koa-logger": "3.0.0",
-    "koa-router": "7.2.0",
+    "koa-router": "7.2.1",
     "koa-send": "4.1.0",
     "pg": "6.2.4",
     "request": "2.81.0",
     "request-promise": "4.2.1",
-    "uuid": "3.0.1",
+    "uuid": "3.1.0",
     "validator": "7.0.0"
   },
   "devDependencies": {
@@ -42,7 +42,7 @@
     "flow-bin": "0.48.0",
     "husky": "0.13.4",
     "jest": "20.0.4",
-    "lint-staged": "3.6.1",
+    "lint-staged": "4.0.0",
     "nodemon": "1.11.0",
     "prettier": "1.4.4",
     "supertest": "3.0.0"
