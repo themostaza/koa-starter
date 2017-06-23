@@ -35,8 +35,6 @@ We've been [parse-server](https://github.com/parse-community/parse-server) users
 **User routes**
 - [x] Get authenticated user - `GET /user`
 
-**Authorization: WIP**  
-
 **Entities CRUD:**  
 - [ ] Message: create - `POST /messages` 
 - [ ] Message: delete - `DELETE /messages/:id` 
