@@ -1,4 +1,3 @@
-/* @flow */
 const Koa = require('koa');
 const loggerMiddleware = require('koa-logger');
 const bodyMiddleware = require('koa-body');

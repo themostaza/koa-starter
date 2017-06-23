@@ -1,4 +1,3 @@
-/* @flow */
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const IS_ENV_DEVELOPMENT = NODE_ENV === 'development';
 const IS_ENV_PRODUCTION = NODE_ENV === 'production';

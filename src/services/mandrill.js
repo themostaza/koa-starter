@@ -1,4 +1,3 @@
-/* @flow */
 const request = require('request-promise');
 const constants = require('../config/constants');
 

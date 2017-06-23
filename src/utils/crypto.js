@@ -1,4 +1,3 @@
-/* @flow */
 // https://github.com/parse-community/parse-server/blob/master/src/cryptoUtils.js
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');

@@ -1,4 +1,3 @@
-/* @flow */
 const router = require('koa-router')();
 const authRoutes = require('./auth');
 const messagesRoutes = require('./messages');

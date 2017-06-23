@@ -1,4 +1,3 @@
-/* @flow */
 const cryptoUtils = require('../utils/crypto');
 const knex = require('../db/connection');
 

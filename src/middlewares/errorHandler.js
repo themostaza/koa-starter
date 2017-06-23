@@ -1,4 +1,3 @@
-/* @flow */
 const koaBouncer = require('koa-bouncer');
 const isNumber = require('lodash').isNumber;
 

@@ -1,4 +1,3 @@
-/* @flow */
 require('dotenv').config();
 const koaBouncer = require('koa-bouncer');
 const errorHandler = require('./errorHandler');

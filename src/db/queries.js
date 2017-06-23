@@ -1,4 +1,3 @@
-/* @flow */
 const knex = require('./connection');
 const uuid = require('uuid');
 

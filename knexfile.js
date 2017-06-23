@@ -1,4 +1,3 @@
-/* @flow */
 require('dotenv').config();
 const constants = require('./src/config/constants');
 const DATABASE_URL = constants.DATABASE_URL;

@@ -1,4 +1,3 @@
-/* @flow */
 const send = require('koa-send');
 const validator = require('validator');
 const cryptoUtils = require('../utils/crypto');

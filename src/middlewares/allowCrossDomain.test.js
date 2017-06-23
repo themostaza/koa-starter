@@ -1,4 +1,3 @@
-/* @flow */
 require('dotenv').config();
 const allowCrossDomain = require('./allowCrossDomain');
 

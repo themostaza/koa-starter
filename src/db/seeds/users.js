@@ -1,4 +1,3 @@
-/* @flow */
 const mocks = require('../../mocks');
 
 exports.seed = async knex => {

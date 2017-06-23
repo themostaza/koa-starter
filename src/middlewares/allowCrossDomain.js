@@ -1,4 +1,3 @@
-/* @flow */
 // https://github.com/parse-community/parse-server/blob/master/src/middlewares.js
 
 module.exports = async (ctx, next) => {

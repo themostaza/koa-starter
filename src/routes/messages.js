@@ -1,4 +1,3 @@
-/* @flow */
 const queries = require('../db/queries');
 
 // ==========================================

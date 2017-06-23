@@ -1,4 +1,3 @@
-/* @flow */
 require('dotenv').config();
 const constants = require('./config/constants');
 const app = require('./app');

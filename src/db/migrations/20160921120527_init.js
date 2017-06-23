@@ -1,4 +1,3 @@
-/* @flow */
 exports.up = async knex => {
   return knex.schema
     .createTable('users', table => {

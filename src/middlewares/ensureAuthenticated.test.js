@@ -1,4 +1,3 @@
-/* @flow */
 require('dotenv').config();
 const knex = require('../db/connection');
 const mocks = require('../mocks');
