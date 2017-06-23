@@ -1,29 +1,24 @@
+const _ = require('lodash');
 const knex = require('./connection');
 const uuid = require('uuid');
 
-// TODO: Translate to knex query languague
-// TODO: Is updating "lastOnlineAt" needed at all?
+const USER_SAFE_MASK = ['id', 'email', 'createdAt'];
+exports.maskUser = user => _.pick(user, USER_SAFE_MASK);
+
 exports.getUserBySessionToken = async sessionToken => {
-  const updateResult = await knex.raw(
-    `
-    UPDATE users
-    SET "lastOnlineAt" = NOW()
-    WHERE id = (
-      SELECT u.id
-      FROM users u
-      WHERE u.id = (
-        SELECT s."userId"
-        FROM "activeSessions" s
-        WHERE s.token = :sessionToken
-      )
-    )
-    RETURNING *
-  `,
-    {
-      sessionToken,
-    }
-  );
-  return updateResult.rows.length > 0 ? updateResult.rows[0] : null;
+  const sessionQuery = knex
+    .select('activeSessions.userId')
+    .from('activeSessions')
+    .where('activeSessions.token', sessionToken);
+
+  const userQuery = knex.select('users.id').from('users').where('users.id', sessionQuery);
+
+  const updateResult = await knex('users')
+    .update('lastOnlineAt', knex.raw(knex.fn.now()))
+    .where('id', userQuery)
+    .returning(USER_SAFE_MASK);
+
+  return updateResult.length > 0 ? updateResult[0] : null;
 };
 
 exports.getUserForLogin = async email => {
@@ -36,23 +31,22 @@ exports.isUserEmailAvailable = async email => {
   return user === null || user === undefined;
 };
 
-exports.createUser = async (email, password, verifyEmailToken) => {
-  const [user] = await knex('users')
-    .insert({ id: uuid.v4(), email: email, password: password, verifyEmailToken: verifyEmailToken })
-    .returning('*');
+exports.getUserById = async userId => {
+  const user = await knex.first(USER_SAFE_MASK).from('users').where('id', userId);
   return user;
 };
 
-exports.createSession = async (token, userId, ipAddress, userAgent) => {
-  const [session] = await knex('sessions')
-    .insert({
-      id: uuid.v4(),
-      token: token,
-      userId: userId,
-      ipAddress: ipAddress,
-      userAgent: userAgent,
-    })
-    .returning('*');
+exports.createUser = async params => {
+  const id = uuid.v4();
+  const userParams = Object.assign({}, params, { id });
+  const [user] = await knex('users').insert(userParams).returning(USER_SAFE_MASK);
+  return user;
+};
+
+exports.createSession = async params => {
+  const id = uuid.v4();
+  const sessionParams = Object.assign({}, params, { id });
+  const [session] = await knex('sessions').insert(sessionParams).returning('*');
   return session;
 };
 
@@ -66,51 +60,38 @@ exports.setUserResetPasswordToken = async (email, token) => {
 
 exports.logoutSession = async (id, userId) => {
   await knex('sessions')
-    .where({ id: id, userId: userId })
-    .update({ loggedOutAt: knex.raw(`now()`) });
+    .where('id', id)
+    .where('userId', userId)
+    .update({ loggedOutAt: knex.fn.now() });
 };
 
 exports.confirmUserEmail = async (email, verifyEmailToken) => {
   const updateResult = await knex('users')
-    .where({ email: email, verifyEmailToken: verifyEmailToken })
+    .where('email', email)
+    .where('verifyEmailToken', verifyEmailToken)
     .update({
       emailVerified: true,
       verifyEmailToken: null,
     })
-    .returning('*');
+    .returning(USER_SAFE_MASK);
   return updateResult && updateResult.length > 0 ? updateResult[0] : null;
 };
 
 exports.updateUserPassword = async (email, resetPasswordToken, password) => {
-  const updatedUser = await knex('users')
-    .where({ email: email, resetPasswordToken: resetPasswordToken })
-    .andWhere('resetPasswordTokenExpiresAt', '>', knex.raw(`now()`))
+  const updateResult = await knex('users')
+    .where('email', email)
+    .where('resetPasswordToken', resetPasswordToken)
+    .andWhere('resetPasswordTokenExpiresAt', '>', knex.fn.now())
     .update({
       password: password,
       resetPasswordToken: null,
       resetPasswordTokenExpiresAt: null,
-    });
-  return updatedUser;
+    })
+    .returning(USER_SAFE_MASK);
+  return updateResult && updateResult.length > 0 ? updateResult[0] : null;
 };
 
-exports.createMessage = async (text, userId) => {
-  const [message] = await knex('messages')
-    .insert({ id: uuid.v4(), text: text, userId: userId })
-    .returning('*');
-  return message;
-};
-
-exports.deleteMessageById = async (id, userId) => {
-  const numOfDeletedMessages = await knex('messages').where({ id: id, userId: userId }).del();
-  return numOfDeletedMessages;
-};
-
-exports.getRecentMessages = async () => {
-  const messages = await knex('messages').orderBy('createdAt', 'DESC').limit(25).returning('*');
-  return messages;
-};
-
-exports.getAllMessages = async () => {
-  const messages = await knex('messages').orderBy('createdAt', 'DESC').returning('*');
-  return messages;
+exports.updateUserById = async (userId, params) => {
+  const user = await knex('users').where('id', userId).update(params).returning(USER_SAFE_MASK);
+  return user && user.length > 0 ? user[0] : null;
 };

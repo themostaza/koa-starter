@@ -1,6 +1,6 @@
 require('dotenv').config();
 const knex = require('../db/connection');
-const mocks = require('../mocks');
+const mocks = require('../db/seeds');
 const ensureAuthenticated = require('./ensureAuthenticated');
 
 beforeEach(async () => {

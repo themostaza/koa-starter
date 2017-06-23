@@ -14,10 +14,11 @@ module.exports = async (ctx, next) => {
         status: 422,
       };
     } else {
-      ctx.status = isNumber(err.status) ? err.status : 500;
+      const status = isNumber(err.status) ? err.status : 500;
+      ctx.status = status;
       ctx.body.error = {
         message: err.message || 'Internal server error',
-        status: isNumber(err.status) ? err.status : 500,
+        status: status,
       };
     }
   }

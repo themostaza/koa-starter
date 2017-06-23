@@ -2,6 +2,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const IS_ENV_DEVELOPMENT = NODE_ENV === 'development';
 const IS_ENV_PRODUCTION = NODE_ENV === 'production';
 const IS_ENV_TEST = NODE_ENV === 'test';
+
 const PORT = Number.parseInt(process.env.PORT || '3000', 10) || 3000;
 const DATABASE_URL =
   process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/postgres';

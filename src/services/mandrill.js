@@ -41,7 +41,7 @@ exports.sendVerifyAccountEmail = async (to, url) => {
 
 exports.sendPasswordResetEmail = async (to, url) => {
   const text = `
-    You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
+    You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n
     Please click on the following link, or paste it into your browser to complete the process:\n
     ${url}\n
     If you did not request this, please ignore this email and your password will remain unchanged.\n
