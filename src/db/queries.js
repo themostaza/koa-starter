@@ -90,8 +90,3 @@ exports.updateUserPassword = async (email, resetPasswordToken, password) => {
     .returning(USER_SAFE_MASK);
   return updateResult && updateResult.length > 0 ? updateResult[0] : null;
 };
-
-exports.updateUserById = async (userId, params) => {
-  const user = await knex('users').where('id', userId).update(params).returning(USER_SAFE_MASK);
-  return user && user.length > 0 ? user[0] : null;
-};
