@@ -20,25 +20,27 @@ We've been [parse-server](https://github.com/parse-community/parse-server) users
 
 **Middlewares:**  
 - [x] Secured routes from unauthenticated access - `middlewares/ensureAuthenticated`
-- [x] Enhanced Koa context with current user - `middlewares/userFromSession`
 - [x] Handled parameters validation - `middlewares/validationHandler` and `koa-bouncer`
 - [x] Handled cross domain requests - `middlewares/allowCrossDomain`
 
 **Authentication using session tokens (parse-server docet):**  
-- [x] Signup - `POST /api/v1/auth/signup` 
-- [x] Login - `POST /api/v1/auth/login` 
-- [x] Logout - `POST /api/v1/auth/logout`
-- [x] Email Verification - `GET /api/v1/auth/verify`
-- [x] Password reset email request - `POST /api/v1/auth/forgot`
-- [x] Password reset page - `GET /api/v1/auth/reset`
-- [x] Password reset handling - `POST /api/v1/auth/reset`
+- [x] Signup - `POST /auth/signup` 
+- [x] Login - `POST /auth/login` 
+- [x] Logout - `POST /auth/logout`
+- [x] Email Verification - `GET /auth/verify`
+- [x] Password reset email request - `POST /auth/forgot`
+- [x] Password reset page - `GET /auth/reset`
+- [x] Password reset handling - `POST /auth/reset`
+
+**User routes**
+- [x] Get authenticated user - `GET /user`
 
 **Authorization: WIP**  
 
 **Entities CRUD:**  
-- [x] Message: create - `POST /api/v1/messages` 
-- [x] Message: delete - `DELETE /api/v1/messages/:id` 
-- [x] Message: get all - `GET /api/v1/messages` 
+- [ ] Message: create - `POST /messages` 
+- [ ] Message: delete - `DELETE /messages/:id` 
+- [ ] Message: get all - `GET /messages` 
 - [ ] ...other
 
 **Utilities:**  
