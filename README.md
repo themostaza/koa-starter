@@ -20,8 +20,10 @@ We've been [parse-server](https://github.com/parse-community/parse-server) users
 
 **Middlewares:**  
 - [x] Secured routes from unauthenticated access - `middlewares/ensureAuthenticated`
-- [x] Handled parameters validation - `middlewares/validationHandler` and `koa-bouncer`
+- [x] Handled parameters validation - `koa-bouncer`
 - [x] Handled cross domain requests - `middlewares/allowCrossDomain`
+- [x] Handled errors - `middlewares/errorHandler`
+
 
 **Authentication using session tokens (parse-server docet):**  
 - [x] Signup - `POST /auth/signup` 
