@@ -22,6 +22,6 @@ app.use(errorHandlerMiddleware);
 app.use(bodyMiddleware());
 app.use(koaBouncer.middleware());
 app.use(router.routes());
-app.use(router.allowedMethods());
+app.use(router.allowedMethods(router.allowedMethods({ throw: true })));
 
 module.exports = app;
