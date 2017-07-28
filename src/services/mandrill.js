@@ -1,5 +1,5 @@
 const request = require('request-promise');
-const constants = require('../config/constants');
+const keys = require('../config/keys');
 
 const MANDRILL_BASE_URL = 'https://mandrillapp.com/api/1.0';
 const SEND_ENDPOINT = '/messages/send.json';
@@ -18,9 +18,9 @@ const sendEmail = async (to, subject, text) => {
         to: [{ email: to }],
         subject: subject,
         text: text,
-        from_email: constants.MAIL_FROM_ADDRESS,
+        from_email: keys.MAIL_FROM_ADDRESS,
       },
-      key: constants.MANDRILL_API_KEY,
+      key: keys.MANDRILL_API_KEY,
     },
   });
   if (!Array.isArray(result) && result.status && result.status === 'error') {

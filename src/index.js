@@ -1,9 +1,9 @@
 require('dotenv').config();
-const constants = require('./config/constants');
+const keys = require('./config/keys');
 const app = require('./app');
 
-app.listen(constants.PORT, () => {
-  console.log('Listening on port ', constants.PORT);
+app.listen(keys.PORT, () => {
+  console.log('Listening on port ', keys.PORT);
 });
 
 module.exports = app;

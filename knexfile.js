@@ -1,6 +1,6 @@
 require('dotenv').config();
-const constants = require('./src/config/constants');
-const DATABASE_URL = constants.DATABASE_URL;
+const keys = require('./src/config/keys');
+const DATABASE_URL = keys.DATABASE_URL;
 
 module.exports = {
   client: 'postgresql',

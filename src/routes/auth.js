@@ -1,7 +1,7 @@
 const send = require('koa-send');
 const validator = require('validator');
 const cryptoUtils = require('../utils/crypto');
-const constants = require('../config/constants');
+const keys = require('../config/keys');
 const mandrillService = require('../services/mandrill');
 const queries = require('../db/queries');
 
@@ -88,7 +88,7 @@ exports.verify = async ctx => {
   if (!updatedUser) {
     ctx.throw(422, 'Invalid url');
   }
-  await send(ctx, constants.HTML_VERIFY_EMAIL_SUCCESS_PATH);
+  await send(ctx, keys.HTML_VERIFY_EMAIL_SUCCESS_PATH);
 };
 
 /**
@@ -122,7 +122,7 @@ exports.forgot = async ctx => {
 exports.showResetPage = async ctx => {
   ctx.validateQuery('token').required().isString();
   ctx.validateQuery('email').required().isString().trim().tap(x => x.toLowerCase());
-  return await send(ctx, `${constants.HTML_PASSWORD_UPDATE_REQUEST_PATH}`);
+  return await send(ctx, `${keys.HTML_PASSWORD_UPDATE_REQUEST_PATH}`);
 };
 
 /**
@@ -162,5 +162,5 @@ exports.reset = async ctx => {
     ctx.redirect(`${redirectBaseUrl}&error=${error}`);
     return;
   }
-  return await send(ctx, `${constants.HTML_PASSWORD_UPDATE_SUCCESS_PATH}`);
+  return await send(ctx, `${keys.HTML_PASSWORD_UPDATE_SUCCESS_PATH}`);
 };

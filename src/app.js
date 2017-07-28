@@ -8,12 +8,12 @@ const router = require('./routes');
 const errorHandlerMiddleware = require('./middlewares/errorHandler');
 const allowCrossDomainMiddleware = require('./middlewares/allowCrossDomain');
 
-const constants = require('./config/constants');
+const keys = require('./config/keys');
 
 const app = new Koa();
 app.poweredBy = false;
 
-if (!constants.IS_ENV_TEST) {
+if (!keys.IS_ENV_TEST) {
   app.use(loggerMiddleware());
 }
 app.use(helmetMiddleware());
