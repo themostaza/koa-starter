@@ -19,9 +19,9 @@ router.post('/auth/reset', authRoutes.reset);
 router.get('/user', ensureAuthenticated, userRoutes.getUser);
 
 router.get('/messages', messageRoutes.getMessages);
-router.get('/messages/:id', messageRoutes.getMessageById);
-router.post('/messages', ensureAuthenticated, messageRoutes.postMessage);
-router.patch('/messages/:id', ensureAuthenticated, messageRoutes.patchMessage);
+router.get('/messages/:id', messageRoutes.getMessage);
+router.post('/messages', ensureAuthenticated, messageRoutes.createMessage);
+router.patch('/messages/:id', ensureAuthenticated, messageRoutes.updateMessage);
 router.delete('/messages/:id', ensureAuthenticated, messageRoutes.deleteMessage);
 
 module.exports = router;
