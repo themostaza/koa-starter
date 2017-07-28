@@ -38,9 +38,11 @@ We've been [parse-server](https://github.com/parse-community/parse-server) users
 - [x] Get authenticated user - `GET /user`
 
 **Entities CRUD:**  
-- [ ] Message: create - `POST /messages` 
-- [ ] Message: delete - `DELETE /messages/:id` 
-- [ ] Message: get all - `GET /messages` 
+- [x] Message: get all - `GET /messages` 
+- [x] Message: get by id - `GET /messages/:id` 
+- [x] Message: create - `POST /messages` 
+- [x] Message: patch - `PATCH /messages/:id` 
+- [x] Message: delete - `DELETE /messages/:id` 
 - [ ] ...other
 
 **Utilities:**  
