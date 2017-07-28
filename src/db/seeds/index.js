@@ -20,9 +20,17 @@ exports.session = {
   userAgent: 'node-superagent/3.5.2',
 };
 
+exports.message = {
+  id: 'd4c418c9-274b-4a17-9817-fbc14c3e2017',
+  userId: exports.user.id,
+  text: 'Hello world',
+};
+
 exports.seed = async knex => {
   await knex('users').del();
   await knex('users').insert(Object.assign({}, exports.user));
   await knex('sessions').del();
   await knex('sessions').insert(Object.assign({}, exports.session));
+  await knex('messages').del();
+  await knex('messages').insert(Object.assign({}, exports.message));
 };

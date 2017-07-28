@@ -2,6 +2,9 @@ const _ = require('lodash');
 const knex = require('./connection');
 const uuid = require('uuid');
 
+// ========================
+//   AUTHENTICATION
+// ========================
 const USER_SAFE_MASK = ['id', 'email', 'createdAt'];
 exports.maskUser = user => _.pick(user, USER_SAFE_MASK);
 
@@ -18,7 +21,7 @@ exports.getUserBySessionToken = async sessionToken => {
     .where('id', userQuery)
     .returning(USER_SAFE_MASK);
 
-  return updateResult.length > 0 ? updateResult[0] : null;
+  return _.head(updateResult);
 };
 
 exports.getUserForLogin = async email => {
@@ -74,7 +77,7 @@ exports.confirmUserEmail = async (email, verifyEmailToken) => {
       verifyEmailToken: null,
     })
     .returning(USER_SAFE_MASK);
-  return updateResult && updateResult.length > 0 ? updateResult[0] : null;
+  return _.head(updateResult);
 };
 
 exports.updateUserPassword = async (email, resetPasswordToken, password) => {
@@ -88,5 +91,43 @@ exports.updateUserPassword = async (email, resetPasswordToken, password) => {
       resetPasswordTokenExpiresAt: null,
     })
     .returning(USER_SAFE_MASK);
-  return updateResult && updateResult.length > 0 ? updateResult[0] : null;
+  return _.head(updateResult);
+};
+
+// ========================
+//   MESSAGES
+// ========================
+exports.getMessages = async (queryParams = {}) => {
+  const messages = knex.select('*').from('messages').where(queryParams);
+  return messages;
+};
+
+exports.getMessageById = async id => {
+  const message = knex.first('*').from('messages').where('id', id);
+  return message;
+};
+
+exports.createMessage = async (params = {}) => {
+  const id = uuid.v4();
+  const messageParams = Object.assign({}, params, { id });
+  const createdMessages = await knex('permissions').insert(messageParams).returning('*');
+  return _.head(createdMessages);
+};
+
+exports.updateMessage = async (messageId, params = {}) => {
+  const updatedMessages = await knex('permissions')
+    .where('id', messageId)
+    .update(params)
+    .returning('*');
+  return _.head(updatedMessages);
+};
+
+exports.deleteMessage = async messageId => {
+  const deletedMessages = await knex('permissions').where('id', messageId).delete().returning('*');
+  return _.head(deletedMessages);
+};
+
+exports.isMessageEditable = async (messageId, userId) => {
+  const message = knex.first('*').from('messages').where({ id: messageId, userId: userId });
+  return !_.isNil(message);
 };

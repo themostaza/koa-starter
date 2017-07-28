@@ -29,7 +29,7 @@
     "koa-logger": "3.0.1",
     "koa-router": "7.2.1",
     "koa-send": "4.1.0",
-    "pg": "6.4.1",
+    "pg": "7.0.2",
     "request": "2.81.0",
     "request-promise": "4.2.1",
     "uuid": "3.1.0",
@@ -37,13 +37,13 @@
   },
   "devDependencies": {
     "babel-jest": "20.0.3",
-    "eslint": "4.2.0",
+    "eslint": "4.3.0",
     "eslint-plugin-react-app": "1.0.2",
     "husky": "0.14.3",
     "jest": "20.0.4",
-    "lint-staged": "4.0.1",
+    "lint-staged": "4.0.2",
     "nodemon": "1.11.0",
-    "prettier": "1.5.2",
+    "prettier": "1.5.3",
     "supertest": "3.0.0"
   },
   "lint-staged": {

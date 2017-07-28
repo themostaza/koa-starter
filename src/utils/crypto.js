@@ -13,13 +13,13 @@ exports.checkPassword = (password, digest) => {
 };
 
 exports.createSessionToken = () => {
-  return crypto.randomBytes(32 / 2).toString('hex');
+  return crypto.randomBytes(16).toString('hex');
 };
 
 exports.createVerifyAccountToken = () => {
-  return crypto.randomBytes(32 / 2).toString('hex');
+  return crypto.randomBytes(16).toString('hex');
 };
 
 exports.createResetPasswordToken = () => {
-  return crypto.randomBytes(32 / 2).toString('hex');
+  return crypto.randomBytes(16).toString('hex');
 };
