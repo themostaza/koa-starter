@@ -11,7 +11,7 @@ const withoutUndefined = obj => _.omitBy(obj, _.isUndefined);
  * @return {Message[]} The list of found messages.
  */
 exports.getMessages = async ctx => {
-  ctx.validateQuery('userId').isString();
+  ctx.validateQuery('userId').optional().isString();
   const { userId } = ctx.vals;
   const queryParams = withoutUndefined({ userId });
   const messages = await queries.getMessages(queryParams);
@@ -60,7 +60,7 @@ exports.updateMessage = async ctx => {
   ctx.validateParam('id').required().isString();
   ctx.validateBody('text').required().isString();
   const { id, text } = ctx.vals;
-  const { userId } = ctx.vals;
+  const userId = ctx.state.user.id;
   if (!await queries.isMessageEditable(id, userId)) {
     ctx.throw(401, 'Insufficient permissions');
   }
@@ -79,8 +79,8 @@ exports.updateMessage = async ctx => {
 exports.deleteMessage = async ctx => {
   ctx.validateParam('id').required().isString();
   const { id } = ctx.vals;
-  const { userId } = ctx.vals;
-  if (!await queries.canUserEditMessage(id, userId)) {
+  const userId = ctx.state.user.id;
+  if (!await queries.isMessageEditable(id, userId)) {
     ctx.throw(401, 'Insufficient permissions');
   }
   const message = await queries.deleteMessage(id);
