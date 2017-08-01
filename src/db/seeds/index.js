@@ -27,10 +27,10 @@ exports.message = {
 };
 
 exports.seed = async knex => {
+  await knex('messages').del();
+  await knex('sessions').del();
   await knex('users').del();
   await knex('users').insert(Object.assign({}, exports.user));
-  await knex('sessions').del();
   await knex('sessions').insert(Object.assign({}, exports.session));
-  await knex('messages').del();
   await knex('messages').insert(Object.assign({}, exports.message));
 };
